@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import { COURSE_INFO, COURSE_MODULES } from './data/courseData';
 import { Header } from './components/Header';
 import { Navigation } from './components/Navigation';
@@ -15,6 +15,7 @@ export function App() {
   const [activeQuadrant, setActiveQuadrant] = useState('story'); // 'story' | 'lab' | 'practice' | 'vault'
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isLabModalOpen, setIsLabModalOpen] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   // Local storage for solved questions
   const [solvedQuestionIds, setSolvedQuestionIds] = useState(() => {
@@ -87,79 +88,86 @@ export function App() {
         onOpenLabs={() => setIsLabModalOpen(true)}
         solvedCount={solvedCount}
         totalQuestions={totalQuestions}
+        onToggleSidebar={() => setIsSidebarOpen(prev => !prev)}
       />
 
-      {/* 2. Module Selector Bar with Milestones */}
-      <Navigation
-        activeModuleId={activeModuleId}
-        onSelectModule={(id) => {
-          setActiveModuleId(id);
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        }}
-        solvedByModule={solvedByModule}
-      />
+      {/* 2. Main Flex Layout: Left Vertical Sidebar + Right Content Column */}
+      <div className="flex-1 flex flex-row w-full max-w-full">
+        {/* Vertical Units Sidebar */}
+        <Navigation
+          activeModuleId={activeModuleId}
+          onSelectModule={(id) => {
+            setActiveModuleId(id);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}
+          solvedByModule={solvedByModule}
+          isOpen={isSidebarOpen}
+          onClose={() => setIsSidebarOpen(false)}
+        />
 
-      {/* 3. The 4-Quadrant Switcher */}
-      <QuadrantNav
-        activeQuadrant={activeQuadrant}
-        onSelectQuadrant={(q) => {
-          setActiveQuadrant(q);
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        }}
-        practiceCount={activeModule.practiceQuestions.length}
-        solvedCount={solvedByModule[activeModule.id] || 0}
-      />
-
-      {/* 4. Main Quadrant Workspace */}
-      <main id="main-content" tabIndex="-1" className="flex-1 px-4 sm:px-6 lg:px-8 py-6 focus:outline-none">
-        {activeQuadrant === 'story' && (
-          <StoryQuadrant
-            module={activeModule}
-            onProceedToLab={() => {
-              setActiveQuadrant('lab');
+        {/* Right Content Column */}
+        <div className="flex-1 flex flex-col min-w-0">
+          {/* Top bar of each unit: Numbering and badge labels removed */}
+          <QuadrantNav
+            activeQuadrant={activeQuadrant}
+            onSelectQuadrant={(q) => {
+              setActiveQuadrant(q);
               window.scrollTo({ top: 0, behavior: 'smooth' });
             }}
           />
-        )}
 
-        {activeQuadrant === 'lab' && (
-          <InteractiveLabQuadrant
-            module={activeModule}
-            onProceedToPractice={() => {
-              setActiveQuadrant('practice');
-              window.scrollTo({ top: 0, behavior: 'smooth' });
-            }}
-          />
-        )}
+          {/* Main Quadrant Workspace */}
+          <main id="main-content" tabIndex="-1" className="flex-1 px-4 sm:px-6 lg:px-8 py-6 focus:outline-none">
+            {activeQuadrant === 'story' && (
+              <StoryQuadrant
+                module={activeModule}
+                onProceedToLab={() => {
+                  setActiveQuadrant('lab');
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+              />
+            )}
 
-        {activeQuadrant === 'practice' && (
-          <PracticeArenaQuadrant
-            module={activeModule}
-            onProceedToVault={() => {
-              setActiveQuadrant('vault');
-              window.scrollTo({ top: 0, behavior: 'smooth' });
-            }}
-            onQuestionSolved={handleQuestionSolved}
-            solvedQuestionIds={solvedQuestionIds}
-          />
-        )}
+            {activeQuadrant === 'lab' && (
+              <InteractiveLabQuadrant
+                module={activeModule}
+                onProceedToPractice={() => {
+                  setActiveQuadrant('practice');
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+              />
+            )}
 
-        {activeQuadrant === 'vault' && (
-          <VaultQuadrant
-            module={activeModule}
-          />
-        )}
-      </main>
+            {activeQuadrant === 'practice' && (
+              <PracticeArenaQuadrant
+                module={activeModule}
+                onProceedToVault={() => {
+                  setActiveQuadrant('vault');
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+                onQuestionSolved={handleQuestionSolved}
+                solvedQuestionIds={solvedQuestionIds}
+              />
+            )}
 
-      {/* 5. Accessible Engineering Footer */}
-      <footer className="bg-space-900 border-t border-space-800 py-6 px-4 text-center text-xs text-slate-400 space-y-2">
-        <p>
-          <strong className="text-slate-200">{COURSE_INFO.code}: {COURSE_INFO.title}</strong> • {COURSE_INFO.institution} • {COURSE_INFO.semester}
-        </p>
-        <p className="text-[11px] text-slate-500">
-          Built following the <em>Active Computational Learning Blueprint</em>. Questions sourced directly from Lecture Quizzes, Tutorials 1-6, Labs 1-7, and Gittaly notes.
-        </p>
-      </footer>
+            {activeQuadrant === 'vault' && (
+              <VaultQuadrant
+                module={activeModule}
+              />
+            )}
+          </main>
+
+          {/* Accessible Engineering Footer */}
+          <footer className="bg-space-900 border-t border-space-800 py-6 px-4 text-center text-xs text-slate-400 space-y-2 mt-auto">
+            <p>
+              <strong className="text-slate-200">{COURSE_INFO.code}: {COURSE_INFO.title}</strong> • {COURSE_INFO.institution} • {COURSE_INFO.semester}
+            </p>
+            <p className="text-[11px] text-slate-500">
+              Built following the <em>Active Computational Learning Blueprint</em>. Questions sourced directly from Lecture Quizzes, Tutorials 1-6, Labs 1-7, and Gittaly notes.
+            </p>
+          </footer>
+        </div>
+      </div>
 
       {/* Modals */}
       <LabCompanionModal
