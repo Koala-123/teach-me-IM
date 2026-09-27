@@ -6,6 +6,7 @@ import { calculateUltrasonicDistance, distanceToEchoTime, calculateEchoDivider, 
 import { calculateInvertingOpAmp, calculateNonInvertingOpAmp } from '../../engines/opampEngine';
 import { idealMotorCalculation, calculateGearbox, calculateVehicleDynamics, calculateEnergyAndMetabolism } from '../../engines/motorEngine';
 import { project3DTo2D, runAStarGridPlanning, updateLogOddsOccupancy } from '../../engines/roboticsEngine';
+import { GraphPlot } from '../common/GraphPlot';
 import { 
   Play, 
   RotateCcw, 
@@ -17,7 +18,10 @@ import {
   ArrowRight,
   ShieldCheck,
   Zap,
-  Info
+  Info,
+  TrendingUp,
+  BarChart2,
+  Activity
 } from 'lucide-react';
 
 export function InteractiveLabQuadrant({ module, onProceedToPractice }) {
@@ -215,8 +219,55 @@ export function InteractiveLabQuadrant({ module, onProceedToPractice }) {
 // ----------------- Individual Dedicated Simulators -----------------
 
 function CircuitSimulator({ params }) {
+  const [activeTab, setActiveTab] = useState('loadline'); // 'loadline' | 'power' | 'schematic'
   const model = theveninModel({ voc: params.vSource, rth: params.rSource });
   const loadResult = model.outputForLoad(params.rLoad);
+
+  const vth = params.vSource;
+  const rth = params.rSource;
+  const rl = params.rLoad;
+  const isc = model.iSc;
+  const maxPowerTheoretical = (vth * vth) / (4 * rth);
+
+  // 1. Tutorial 1 Load Line: Source line (Vo = Vth - I*Rth) and Load line (V = I*RL)
+  const loadLineSeries = useMemo(() => {
+    const maxI = Math.max(isc * 1.15, loadResult.iOut * 1.5, 0.5);
+    const sourcePoints = [];
+    const loadPoints = [];
+    const steps = 30;
+
+    for (let k = 0; k <= steps; k++) {
+      const i = (k / steps) * maxI;
+      const vo = Math.max(0, vth - i * rth);
+      const vl = i * rl;
+      sourcePoints.push({ x: i, y: vo });
+      if (vl <= vth * 1.3) {
+        loadPoints.push({ x: i, y: vl });
+      }
+    }
+
+    return [
+      { name: `Source Line: Vo = ${vth}V - I·${rth}Ω`, color: '#00f5ff', data: sourcePoints, strokeWidth: 2.5 },
+      { name: `Load Line: VL = I·${rl}Ω`, color: '#10b981', data: loadPoints, strokeWidth: 2.5 }
+    ];
+  }, [vth, rth, rl, isc, loadResult.iOut]);
+
+  // 2. Power vs Load Resistance curve (PL vs RL) peaking at RL = Rth
+  const powerCurveSeries = useMemo(() => {
+    const points = [];
+    const maxRL = Math.max(rth * 4, 40, rl * 1.5);
+    const steps = 50;
+
+    for (let k = 1; k <= steps; k++) {
+      const r = (k / steps) * maxRL;
+      const res = model.outputForLoad(r);
+      points.push({ x: r, y: res.power });
+    }
+
+    return [
+      { name: 'Power in Load PL (W)', color: '#f59e0b', data: points, strokeWidth: 2.5, fillArea: true }
+    ];
+  }, [model, rth, rl]);
 
   return (
     <div className="space-y-4">
@@ -231,39 +282,119 @@ function CircuitSimulator({ params }) {
         </span>
       </div>
 
-      {/* SVG Circuit Schematic */}
-      <div className="bg-space-950 p-4 rounded-xl border border-space-800 flex items-center justify-center">
-        <svg viewBox="0 0 400 180" className="w-full max-w-md h-auto">
-          {/* Outer Loop */}
-          <rect x="50" y="30" width="300" height="120" fill="none" stroke="#334155" strokeWidth="3" rx="8" />
-          
-          {/* Battery */}
-          <g transform="translate(50, 90)">
-            <line x1="0" y1="-25" x2="0" y2="25" stroke="#00f5ff" strokeWidth="4" />
-            <line x1="-12" y1="-12" x2="-12" y2="12" stroke="#64748b" strokeWidth="3" />
-            <text x="-35" y="-5" fill="#00f5ff" fontSize="12" fontWeight="bold">Vth</text>
-            <text x="-40" y="12" fill="#94a3b8" fontSize="10">{params.vSource}V</text>
-          </g>
+      {/* Visual Workspace with Graph & Schematic Switcher Tabs */}
+      <div className="space-y-2">
+        <div className="flex flex-wrap items-center gap-1.5 bg-space-950/90 p-1.5 rounded-xl border border-space-800">
+          <button
+            onClick={() => setActiveTab('loadline')}
+            className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition ${
+              activeTab === 'loadline'
+                ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow-sm'
+                : 'text-slate-400 hover:text-slate-200'
+            }`}
+          >
+            <TrendingUp className="w-3.5 h-3.5" />
+            <span>V vs I Load Line (Tutorial 1)</span>
+          </button>
+          <button
+            onClick={() => setActiveTab('power')}
+            className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition ${
+              activeTab === 'power'
+                ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40 shadow-sm'
+                : 'text-slate-400 hover:text-slate-200'
+            }`}
+          >
+            <Activity className="w-3.5 h-3.5" />
+            <span>PL vs RL Power Curve</span>
+          </button>
+          <button
+            onClick={() => setActiveTab('schematic')}
+            className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition ${
+              activeTab === 'schematic'
+                ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 shadow-sm'
+                : 'text-slate-400 hover:text-slate-200'
+            }`}
+          >
+            <BarChart2 className="w-3.5 h-3.5" />
+            <span>Circuit Schematic</span>
+          </button>
+        </div>
 
-          {/* Internal Resistor R_O */}
-          <g transform="translate(140, 30)">
-            <rect x="-25" y="-12" width="50" height="24" fill="#1e293b" stroke="#f59e0b" strokeWidth="2" rx="4" />
-            <text x="0" y="4" fill="#fbbf24" fontSize="11" fontWeight="bold" textAnchor="middle">Ro = {params.rSource}Ω</text>
-          </g>
+        {/* Tab 1: V vs I Load Line Graph */}
+        {activeTab === 'loadline' && (
+          <GraphPlot
+            title="Thévenin Load Line & Operating Q-Point"
+            subtitle="Source characteristic Vo = Vth - I·Rth intersecting load resistor characteristic VL = I·RL"
+            xLabel="Load Current I"
+            xUnit="A"
+            yLabel="Terminal Voltage V"
+            yUnit="V"
+            series={loadLineSeries}
+            operatingPoint={{
+              x: loadResult.iOut,
+              y: loadResult.vOut,
+              color: '#38bdf8',
+              label: `Q (${loadResult.iOut.toFixed(2)}A, ${loadResult.vOut.toFixed(2)}V)`
+            }}
+            referenceLines={[
+              { type: 'y', value: vth, label: `Voc = ${vth}V`, color: '#00f5ff' },
+              { type: 'x', value: isc, label: `Isc = ${isc.toFixed(2)}A`, color: '#f59e0b' }
+            ]}
+            height={230}
+          />
+        )}
 
-          {/* Load Resistor R_L */}
-          <g transform="translate(350, 90)">
-            <rect x="-14" y="-30" width="28" height="60" fill="#1e293b" stroke="#10b981" strokeWidth="2" rx="4" />
-            <text x="25" y="-5" fill="#34d399" fontSize="11" fontWeight="bold">RL = {params.rLoad}Ω</text>
-            <text x="25" y="12" fill="#94a3b8" fontSize="10">{loadResult.vOut.toFixed(2)}V</text>
-          </g>
+        {/* Tab 2: PL vs RL Maximum Power Transfer Graph */}
+        {activeTab === 'power' && (
+          <GraphPlot
+            title="Maximum Power Transfer Characteristic"
+            subtitle="Delivered load power PL = I²·RL peaking strictly when RL = Rth (Tutorial 1 & 2)"
+            xLabel="Load Resistance RL"
+            xUnit="Ω"
+            yLabel="Load Power PL"
+            yUnit="W"
+            series={powerCurveSeries}
+            operatingPoint={{
+              x: rl,
+              y: loadResult.power,
+              color: '#f59e0b',
+              label: `${rl}Ω: ${loadResult.power.toFixed(2)}W`
+            }}
+            referenceLines={[
+              { type: 'x', value: rth, label: `RL = Rth (${rth}Ω)`, color: '#f59e0b' },
+              { type: 'y', value: maxPowerTheoretical, label: `Pmax = ${maxPowerTheoretical.toFixed(2)}W`, color: '#10b981' }
+            ]}
+            height={230}
+          />
+        )}
 
-          {/* Current Flow Arrow */}
-          <g transform="translate(240, 22)">
-            <path d="M -20 0 L 20 0 M 12 -5 L 20 0 L 12 5" fill="none" stroke="#00f5ff" strokeWidth="2" />
-            <text x="0" y="-8" fill="#00f5ff" fontSize="10" fontWeight="mono" textAnchor="middle">I = {loadResult.iOut.toFixed(3)} A</text>
-          </g>
-        </svg>
+        {/* Tab 3: SVG Circuit Schematic */}
+        {activeTab === 'schematic' && (
+          <div className="bg-space-950 p-4 rounded-xl border border-space-800 flex items-center justify-center">
+            <svg viewBox="0 0 400 180" className="w-full max-w-md h-auto">
+              <rect x="50" y="30" width="300" height="120" fill="none" stroke="#334155" strokeWidth="3" rx="8" />
+              <g transform="translate(50, 90)">
+                <line x1="0" y1="-25" x2="0" y2="25" stroke="#00f5ff" strokeWidth="4" />
+                <line x1="-12" y1="-12" x2="-12" y2="12" stroke="#64748b" strokeWidth="3" />
+                <text x="-35" y="-5" fill="#00f5ff" fontSize="12" fontWeight="bold">Vth</text>
+                <text x="-40" y="12" fill="#94a3b8" fontSize="10">{params.vSource}V</text>
+              </g>
+              <g transform="translate(140, 30)">
+                <rect x="-25" y="-12" width="50" height="24" fill="#1e293b" stroke="#f59e0b" strokeWidth="2" rx="4" />
+                <text x="0" y="4" fill="#fbbf24" fontSize="11" fontWeight="bold" textAnchor="middle">Ro = {params.rSource}Ω</text>
+              </g>
+              <g transform="translate(350, 90)">
+                <rect x="-14" y="-30" width="28" height="60" fill="#1e293b" stroke="#10b981" strokeWidth="2" rx="4" />
+                <text x="25" y="-5" fill="#34d399" fontSize="11" fontWeight="bold">RL = {params.rLoad}Ω</text>
+                <text x="25" y="12" fill="#94a3b8" fontSize="10">{loadResult.vOut.toFixed(2)}V</text>
+              </g>
+              <g transform="translate(240, 22)">
+                <path d="M -20 0 L 20 0 M 12 -5 L 20 0 L 12 5" fill="none" stroke="#00f5ff" strokeWidth="2" />
+                <text x="0" y="-8" fill="#00f5ff" fontSize="10" fontWeight="mono" textAnchor="middle">I = {loadResult.iOut.toFixed(3)} A</text>
+              </g>
+            </svg>
+          </div>
+        )}
       </div>
 
       {/* Metrics Grid */}
@@ -363,6 +494,7 @@ function PicoSimulator({ params }) {
 }
 
 function SensorSimulator({ params }) {
+  const [activeTab, setActiveTab] = useState('graph'); // 'graph' | 'sensors'
   const timeUs = distanceToEchoTime({ distanceCm: params.targetDistanceCm, tempCelsius: params.airTempC });
   const sonar = calculateUltrasonicDistance({ echoTimeUs: timeUs, tempCelsius: params.airTempC });
   const divider = calculateEchoDivider(1000, 2000, 5.0);
@@ -371,6 +503,18 @@ function SensorSimulator({ params }) {
     surfaceType: params.surfaceType === 1 ? 'shiny_mirror' : 'matte',
     surfaceAngleDeg: params.surfaceAngleDeg
   });
+
+  const sonarCurve = useMemo(() => {
+    const points = [];
+    const c = sonar.speedOfSoundMs;
+    for (let d = 0; d <= 400; d += 10) {
+      const t = (2 * (d / 100) / c) * 1e6;
+      points.push({ x: d, y: t });
+    }
+    return [
+      { name: `ToF Curve (c = ${sonar.speedOfSoundMs.toFixed(1)} m/s)`, color: '#00f5ff', data: points, strokeWidth: 2.5, fillArea: true }
+    ];
+  }, [sonar.speedOfSoundMs]);
 
   return (
     <div className="space-y-4">
@@ -396,53 +540,107 @@ function SensorSimulator({ params }) {
         </div>
       )}
 
-      {/* Sensor Comparison Display */}
-      <div className="grid grid-cols-2 gap-4">
-        {/* Ultrasonic Sonar Box */}
-        <div className="bg-space-950 p-4 rounded-xl border border-space-800 space-y-2">
-          <span className="text-xs font-bold text-cyan-400 block">HC-SR04 Ultrasonic Sonar</span>
-          <div className="space-y-1 font-mono text-xs">
-            <div className="flex justify-between">
-              <span className="text-slate-400">Speed of Sound c:</span>
-              <span className="text-slate-200">{sonar.speedOfSoundMs.toFixed(1)} m/s</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-slate-400">Round-trip Echo:</span>
-              <span className="text-cyan-400">{timeUs} µs</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-slate-400">Echo Pin Stepping:</span>
-              <span className="text-emerald-400">5V → {divider.vOut.toFixed(2)}V</span>
-            </div>
-          </div>
+      {/* Tabs */}
+      <div className="space-y-2">
+        <div className="flex flex-wrap items-center gap-1.5 bg-space-950/90 p-1.5 rounded-xl border border-space-800">
+          <button
+            onClick={() => setActiveTab('graph')}
+            className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition ${
+              activeTab === 'graph'
+                ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow-sm'
+                : 'text-slate-400 hover:text-slate-200'
+            }`}
+          >
+            <TrendingUp className="w-3.5 h-3.5" />
+            <span>Echo Time vs Distance (t vs d)</span>
+          </button>
+          <button
+            onClick={() => setActiveTab('sensors')}
+            className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition ${
+              activeTab === 'sensors'
+                ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40 shadow-sm'
+                : 'text-slate-400 hover:text-slate-200'
+            }`}
+          >
+            <Activity className="w-3.5 h-3.5" />
+            <span>Sensor Hardware Comparison</span>
+          </button>
         </div>
 
-        {/* IR Proximity Box */}
-        <div className="bg-space-950 p-4 rounded-xl border border-space-800 space-y-2">
-          <span className="text-xs font-bold text-amber-400 block">Infrared (IR) Proximity Sensor</span>
-          <div className="space-y-1 font-mono text-xs">
-            <div className="flex justify-between">
-              <span className="text-slate-400">Surface:</span>
-              <span className="text-slate-200">{params.surfaceType === 1 ? 'Shiny Mirror' : 'Matte'}</span>
+        {activeTab === 'graph' && (
+          <GraphPlot
+            title="Ultrasonic Acoustic Time-of-Flight Characteristic"
+            subtitle={`Round-trip propagation t = 2d / c with 2cm transducer blind zone (${params.airTempC}°C)`}
+            xLabel="Target Distance d"
+            xUnit="cm"
+            yLabel="Round-trip Echo Time t"
+            yUnit="µs"
+            series={sonarCurve}
+            operatingPoint={{
+              x: params.targetDistanceCm,
+              y: timeUs,
+              color: sonar.isValid ? '#00f5ff' : '#f43f5e',
+              label: `${params.targetDistanceCm} cm: ${timeUs} µs`
+            }}
+            shadedRegions={[
+              { xMin: 0, xMax: 2, color: '#ef4444', label: '2cm Blind Zone' }
+            ]}
+            referenceLines={[
+              { type: 'x', value: 400, label: '400cm Max Range', color: '#64748b' }
+            ]}
+            height={220}
+          />
+        )}
+
+        {/* Sensor Comparison Display */}
+        {activeTab === 'sensors' && (
+          <div className="grid grid-cols-2 gap-4">
+            <div className="bg-space-950 p-4 rounded-xl border border-space-800 space-y-2">
+              <span className="text-xs font-bold text-cyan-400 block">HC-SR04 Ultrasonic Sonar</span>
+              <div className="space-y-1 font-mono text-xs">
+                <div className="flex justify-between">
+                  <span className="text-slate-400">Speed of Sound c:</span>
+                  <span className="text-slate-200">{sonar.speedOfSoundMs.toFixed(1)} m/s</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-slate-400">Round-trip Echo:</span>
+                  <span className="text-cyan-400">{timeUs} µs</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-slate-400">Echo Pin Stepping:</span>
+                  <span className="text-emerald-400">5V → {divider.vOut.toFixed(2)}V</span>
+                </div>
+              </div>
             </div>
-            <div className="flex justify-between">
-              <span className="text-slate-400">Tilt Angle:</span>
-              <span className="text-slate-200">{params.surfaceAngleDeg}°</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-slate-400">Obstacle Detection:</span>
-              <span className={`font-bold ${ir.isObstacleDetected ? 'text-emerald-400' : 'text-rose-400'}`}>
-                {ir.isObstacleDetected ? 'DETECTED (OUT=LOW)' : 'NO REFLECTION (OUT=HIGH)'}
-              </span>
+
+            <div className="bg-space-950 p-4 rounded-xl border border-space-800 space-y-2">
+              <span className="text-xs font-bold text-amber-400 block">Infrared (IR) Proximity Sensor</span>
+              <div className="space-y-1 font-mono text-xs">
+                <div className="flex justify-between">
+                  <span className="text-slate-400">Surface:</span>
+                  <span className="text-slate-200">{params.surfaceType === 1 ? 'Shiny Mirror' : 'Matte'}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-slate-400">Tilt Angle:</span>
+                  <span className="text-slate-200">{params.surfaceAngleDeg}°</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-slate-400">Obstacle Detection:</span>
+                  <span className={`font-bold ${ir.isObstacleDetected ? 'text-emerald-400' : 'text-rose-400'}`}>
+                    {ir.isObstacleDetected ? 'DETECTED (OUT=LOW)' : 'NO REFLECTION (OUT=HIGH)'}
+                  </span>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );
 }
 
 function OpAmpSimulator({ params }) {
+  const [activeTab, setActiveTab] = useState('transfer'); // 'transfer' | 'metrics'
   const inverting = calculateInvertingOpAmp({
     vIn: params.vIn,
     r1: params.r1,
@@ -450,6 +648,24 @@ function OpAmpSimulator({ params }) {
     vCc: params.vCc,
     vEe: -params.vCc
   });
+
+  const gain = -(params.r2 / params.r1);
+  const vcc = params.vCc;
+
+  const transferSeries = useMemo(() => {
+    const points = [];
+    const steps = 50;
+    const vMax = Math.max(2.5, Math.abs(params.vIn) * 1.3);
+    for (let k = 0; k <= steps; k++) {
+      const vin = -vMax + (k / steps) * (2 * vMax);
+      const voutLinear = vin * gain;
+      const vout = Math.max(-vcc, Math.min(vcc, voutLinear));
+      points.push({ x: vin, y: vout });
+    }
+    return [
+      { name: `Transfer Characteristic (Gain = ${gain.toFixed(1)}x)`, color: '#00f5ff', data: points, strokeWidth: 2.5 }
+    ];
+  }, [params.r1, params.r2, gain, vcc, params.vIn]);
 
   return (
     <div className="space-y-4">
@@ -468,38 +684,170 @@ function OpAmpSimulator({ params }) {
         </span>
       </div>
 
-      <div className="bg-space-950 p-4 rounded-xl border border-space-800 space-y-3">
-        <div className="grid grid-cols-3 gap-3 text-center text-xs">
-          <div className="bg-space-900 p-2.5 rounded-lg border border-space-800">
-            <span className="text-slate-400 block text-[10px]">Closed-Loop Gain</span>
-            <span className="font-mono font-bold text-cyan-400 text-sm">{inverting.idealGain}x</span>
-          </div>
-          <div className="bg-space-900 p-2.5 rounded-lg border border-space-800">
-            <span className="text-slate-400 block text-[10px]">Actual V_out</span>
-            <span className={`font-mono font-bold text-sm ${inverting.isSaturated ? 'text-rose-400' : 'text-emerald-400'}`}>
-              {inverting.vOut.toFixed(2)} V
-            </span>
-          </div>
-          <div className="bg-space-900 p-2.5 rounded-lg border border-space-800">
-            <span className="text-slate-400 block text-[10px]">Cutoff Freq (1MHz GBWP)</span>
-            <span className="font-mono font-bold text-amber-400 text-sm">{(inverting.cutoffFreqHz / 1000).toFixed(1)} kHz</span>
-          </div>
+      {/* Tabs */}
+      <div className="space-y-2">
+        <div className="flex flex-wrap items-center gap-1.5 bg-space-950/90 p-1.5 rounded-xl border border-space-800">
+          <button
+            onClick={() => setActiveTab('transfer')}
+            className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition ${
+              activeTab === 'transfer'
+                ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow-sm'
+                : 'text-slate-400 hover:text-slate-200'
+            }`}
+          >
+            <TrendingUp className="w-3.5 h-3.5" />
+            <span>Vout vs Vin Transfer Curve</span>
+          </button>
+          <button
+            onClick={() => setActiveTab('metrics')}
+            className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition ${
+              activeTab === 'metrics'
+                ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40 shadow-sm'
+                : 'text-slate-400 hover:text-slate-200'
+            }`}
+          >
+            <Activity className="w-3.5 h-3.5" />
+            <span>Amplifier Specs & Bandwidth</span>
+          </button>
         </div>
 
-        {inverting.isSaturated && (
-          <div className="bg-rose-900/30 border border-rose-600/60 p-2.5 rounded-lg text-xs text-rose-200">
-            ⚠️ <strong>Rail Saturation:</strong> Theoretical output ({inverting.vOutLinear.toFixed(1)}V) exceeds ±{params.vCc}V rail limits. Virtual ground at inverting node collapses!
-          </div>
+        {activeTab === 'transfer' && (
+          <GraphPlot
+            title="Inverting Op-Amp DC Transfer Characteristic"
+            subtitle={`Linear slope Av = -R2/R1 = ${gain.toFixed(1)}x clamped at power rails ±${vcc}V (Sedra/Smith Ch 2)`}
+            xLabel="Input Voltage Vin"
+            xUnit="V"
+            yLabel="Output Voltage Vout"
+            yUnit="V"
+            series={transferSeries}
+            operatingPoint={{
+              x: params.vIn,
+              y: inverting.vOut,
+              color: inverting.isSaturated ? '#f43f5e' : '#38bdf8',
+              label: `Vin=${params.vIn}V, Vout=${inverting.vOut.toFixed(2)}V`
+            }}
+            referenceLines={[
+              { type: 'y', value: vcc, label: `+Vsat = +${vcc}V`, color: '#f43f5e' },
+              { type: 'y', value: -vcc, label: `-Vsat = -${vcc}V`, color: '#f43f5e' }
+            ]}
+            height={220}
+          />
         )}
+
+        <div className="bg-space-950 p-4 rounded-xl border border-space-800 space-y-3">
+          <div className="grid grid-cols-3 gap-3 text-center text-xs">
+            <div className="bg-space-900 p-2.5 rounded-lg border border-space-800">
+              <span className="text-slate-400 block text-[10px]">Closed-Loop Gain</span>
+              <span className="font-mono font-bold text-cyan-400 text-sm">{inverting.idealGain}x</span>
+            </div>
+            <div className="bg-space-900 p-2.5 rounded-lg border border-space-800">
+              <span className="text-slate-400 block text-[10px]">Actual V_out</span>
+              <span className={`font-mono font-bold text-sm ${inverting.isSaturated ? 'text-rose-400' : 'text-emerald-400'}`}>
+                {inverting.vOut.toFixed(2)} V
+              </span>
+            </div>
+            <div className="bg-space-900 p-2.5 rounded-lg border border-space-800">
+              <span className="text-slate-400 block text-[10px]">Cutoff Freq (1MHz GBWP)</span>
+              <span className="font-mono font-bold text-amber-400 text-sm">{(inverting.cutoffFreqHz / 1000).toFixed(1)} kHz</span>
+            </div>
+          </div>
+
+          {inverting.isSaturated && (
+            <div className="bg-rose-900/30 border border-rose-600/60 p-2.5 rounded-lg text-xs text-rose-200">
+              ⚠️ <strong>Rail Saturation:</strong> Theoretical output ({inverting.vOutLinear.toFixed(1)}V) exceeds ±{params.vCc}V rail limits. Virtual ground at inverting node collapses!
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
 }
 
 function MotorSimulator({ params }) {
+  const [activeTab, setActiveTab] = useState('pvsw'); // 'pvsw' | 'tauvsw' | 'ivsw' | 'vehicle' | 'gearbox'
   const motor = idealMotorCalculation({ powerWatts: params.motorPowerWatts, rpm: params.outputRpm });
   const car = calculateVehicleDynamics({ powerWatts: params.motorPowerWatts, massKg: params.vehicleMassKg, speedMs: params.vehicleSpeedMs });
   const meta = calculateEnergyAndMetabolism({ workHours: 8, humanPowerWatts: 100 });
+
+  const vs = params.supplyVoltage || 12;
+  const ra = params.armatureResistance || 2.0;
+  const kt = 0.05;
+  const ke = 0.05;
+
+  const stallCurrentA = vs / ra;
+  const stallTorqueNm = kt * stallCurrentA;
+  const noLoadOmegaRadS = vs / ke;
+  const pMaxWatts = (stallTorqueNm * noLoadOmegaRadS) / 4;
+  const optimalOmega = noLoadOmegaRadS / 2;
+
+  // Generate DC motor characteristic curves
+  const { pSeries, tauSeries, iEtaSeries, vehicleSeries, gearboxSeries } = useMemo(() => {
+    const pPts = [];
+    const tauPts = [];
+    const iPts = [];
+    const etaPts = [];
+    const steps = 40;
+
+    for (let i = 0; i <= steps; i++) {
+      const w = (i / steps) * noLoadOmegaRadS;
+      const tau = Math.max(0, stallTorqueNm * (1 - w / noLoadOmegaRadS));
+      const p = tau * w;
+      const current = Math.max(0, (vs - ke * w) / ra);
+
+      // Net torque accounting for small mechanical no-load loss (3% of stall torque)
+      const tauLoss = 0.03 * stallTorqueNm;
+      const netTau = Math.max(0, tau - tauLoss);
+      const netP = netTau * w;
+      const pElec = vs * current;
+      const eta = pElec > 0 ? Math.min(95, (netP / pElec) * 100) : 0;
+
+      pPts.push({ x: w, y: p });
+      tauPts.push({ x: w, y: tau });
+      iPts.push({ x: w, y: current });
+      etaPts.push({ x: w, y: eta });
+    }
+
+    // Vehicle Tractive curves: F(v) = P / v, a(v) = P / (m * v)
+    const fPts = [];
+    const aPts = [];
+    const pWatts = params.motorPowerWatts;
+    const mKg = params.vehicleMassKg;
+    for (let k = 1; k <= 35; k++) {
+      const v = (k / 35) * 10;
+      const f = pWatts / v;
+      const a = f / mKg;
+      fPts.push({ x: v, y: f });
+      aPts.push({ x: v, y: a });
+    }
+
+    // Gearbox torque hyperbola: tau = P / omega across RPM
+    const gearPts = [];
+    for (let r = 2; r <= 80; r += 2) {
+      const w = (r * 2 * Math.PI) / 60;
+      const t = pWatts / w;
+      gearPts.push({ x: r, y: t });
+    }
+
+    return {
+      pSeries: [
+        { name: 'Mechanical Power P(ω) [W]', color: '#00f5ff', data: pPts, strokeWidth: 2.5, fillArea: true }
+      ],
+      tauSeries: [
+        { name: `Shaft Torque τ(ω) [N·m] (Stall = ${stallTorqueNm.toFixed(2)} N·m)`, color: '#f59e0b', data: tauPts, strokeWidth: 2.5 }
+      ],
+      iEtaSeries: [
+        { name: 'Armature Current I(ω) [A]', color: '#f43f5e', data: iPts, strokeWidth: 2 },
+        { name: 'Conversion Efficiency η(ω) [%]', color: '#10b981', data: etaPts, strokeWidth: 2.5, fillArea: true }
+      ],
+      vehicleSeries: [
+        { name: 'Tractive Push Force F(v) [N]', color: '#10b981', data: fPts, strokeWidth: 2 },
+        { name: 'Instantaneous Accel a(v) [m/s²]', color: '#00f5ff', data: aPts, strokeWidth: 2.5, fillArea: true }
+      ],
+      gearboxSeries: [
+        { name: `Shaft Torque τ = ${pWatts}W / ω [N·m]`, color: '#f59e0b', data: gearPts, strokeWidth: 2.5, fillArea: true }
+      ]
+    };
+  }, [vs, ra, stallTorqueNm, noLoadOmegaRadS, params.motorPowerWatts, params.vehicleMassKg]);
 
   return (
     <div className="space-y-4">
@@ -514,6 +862,180 @@ function MotorSimulator({ params }) {
         </span>
       </div>
 
+      {/* Visual Workspace: Graph Selector Tabs */}
+      <div className="space-y-2">
+        <div className="flex flex-wrap items-center gap-1.5 bg-space-950/90 p-1.5 rounded-xl border border-space-800">
+          <button
+            onClick={() => setActiveTab('pvsw')}
+            className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition ${
+              activeTab === 'pvsw'
+                ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow-sm'
+                : 'text-slate-400 hover:text-slate-200'
+            }`}
+          >
+            <Activity className="w-3.5 h-3.5" />
+            <span>P vs ω (Power Parabola)</span>
+          </button>
+          <button
+            onClick={() => setActiveTab('tauvsw')}
+            className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition ${
+              activeTab === 'tauvsw'
+                ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40 shadow-sm'
+                : 'text-slate-400 hover:text-slate-200'
+            }`}
+          >
+            <TrendingUp className="w-3.5 h-3.5" />
+            <span>τ vs ω (Torque-Speed)</span>
+          </button>
+          <button
+            onClick={() => setActiveTab('ivsw')}
+            className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition ${
+              activeTab === 'ivsw'
+                ? 'bg-rose-500/20 text-rose-300 border border-rose-500/40 shadow-sm'
+                : 'text-slate-400 hover:text-slate-200'
+            }`}
+          >
+            <Zap className="w-3.5 h-3.5" />
+            <span>I & η vs ω (Efficiency)</span>
+          </button>
+          <button
+            onClick={() => setActiveTab('vehicle')}
+            className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition ${
+              activeTab === 'vehicle'
+                ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 shadow-sm'
+                : 'text-slate-400 hover:text-slate-200'
+            }`}
+          >
+            <BarChart2 className="w-3.5 h-3.5" />
+            <span>F & a vs v (Vehicle)</span>
+          </button>
+          <button
+            onClick={() => setActiveTab('gearbox')}
+            className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition ${
+              activeTab === 'gearbox'
+                ? 'bg-indigo-500/20 text-indigo-300 border border-indigo-500/40 shadow-sm'
+                : 'text-slate-400 hover:text-slate-200'
+            }`}
+          >
+            <TrendingUp className="w-3.5 h-3.5" />
+            <span>τ vs RPM (Gearbox)</span>
+          </button>
+        </div>
+
+        {/* Tab 1: P vs omega Parabola */}
+        {activeTab === 'pvsw' && (
+          <GraphPlot
+            title="DC Motor Mechanical Power Curve P(ω)"
+            subtitle="Quadratic parabola P(ω) = τ_stall·(ω - ω²/ω_no_load) peaking strictly at ω = ω_no_load / 2"
+            xLabel="Shaft Angular Velocity ω"
+            xUnit="rad/s"
+            yLabel="Mechanical Power P"
+            yUnit="W"
+            series={pSeries}
+            operatingPoint={{
+              x: Math.min(noLoadOmegaRadS, motor.omegaRadS),
+              y: Math.max(0, stallTorqueNm * (1 - Math.min(noLoadOmegaRadS, motor.omegaRadS) / noLoadOmegaRadS) * Math.min(noLoadOmegaRadS, motor.omegaRadS)),
+              color: '#00f5ff',
+              label: `ω = ${motor.omegaRadS.toFixed(1)} rad/s`
+            }}
+            referenceLines={[
+              { type: 'x', value: optimalOmega, label: `ω* = ${optimalOmega.toFixed(0)} rad/s (Pmax)`, color: '#f59e0b' },
+              { type: 'y', value: pMaxWatts, label: `Pmax = ${pMaxWatts.toFixed(1)}W`, color: '#10b981' }
+            ]}
+            height={230}
+          />
+        )}
+
+        {/* Tab 2: tau vs omega Linear Characteristic */}
+        {activeTab === 'tauvsw' && (
+          <GraphPlot
+            title="DC Motor Torque-Speed Characteristic τ(ω)"
+            subtitle="Linear load line τ(ω) = τ_stall·(1 - ω/ω_no_load) with negative back-EMF slope -kt·ke/Ra"
+            xLabel="Shaft Angular Velocity ω"
+            xUnit="rad/s"
+            yLabel="Shaft Torque τ"
+            yUnit="N·m"
+            series={tauSeries}
+            operatingPoint={{
+              x: Math.min(noLoadOmegaRadS, motor.omegaRadS),
+              y: Math.max(0, stallTorqueNm * (1 - Math.min(noLoadOmegaRadS, motor.omegaRadS) / noLoadOmegaRadS)),
+              color: '#f59e0b',
+              label: `τ = ${Math.max(0, stallTorqueNm * (1 - Math.min(noLoadOmegaRadS, motor.omegaRadS) / noLoadOmegaRadS)).toFixed(2)} N·m`
+            }}
+            referenceLines={[
+              { type: 'y', value: stallTorqueNm, label: `τ_stall = ${stallTorqueNm.toFixed(2)} N·m`, color: '#f43f5e' },
+              { type: 'x', value: noLoadOmegaRadS, label: `ω_no_load = ${noLoadOmegaRadS.toFixed(0)} rad/s`, color: '#00f5ff' }
+            ]}
+            height={230}
+          />
+        )}
+
+        {/* Tab 3: Current & Efficiency Curves */}
+        {activeTab === 'ivsw' && (
+          <GraphPlot
+            title="Armature Current I(ω) & Electromechanical Efficiency η(ω)"
+            subtitle="Efficiency peaks at high speed (~80% of ω_no_load); drops to 0% at stall and at no-load"
+            xLabel="Shaft Angular Velocity ω"
+            xUnit="rad/s"
+            yLabel="Current I (A) & Efficiency η (%)"
+            series={iEtaSeries}
+            operatingPoint={{
+              x: Math.min(noLoadOmegaRadS, motor.omegaRadS),
+              y: Math.min(95, Math.max(0, ((Math.max(0, stallTorqueNm * (1 - Math.min(noLoadOmegaRadS, motor.omegaRadS) / noLoadOmegaRadS) - 0.03 * stallTorqueNm) * Math.min(noLoadOmegaRadS, motor.omegaRadS)) / (vs * Math.max(0.01, (vs - ke * Math.min(noLoadOmegaRadS, motor.omegaRadS)) / ra))) * 100)),
+              color: '#10b981',
+              label: `Speed: ${motor.omegaRadS.toFixed(0)} rad/s`
+            }}
+            referenceLines={[
+              { type: 'y', value: stallCurrentA, label: `I_stall = ${stallCurrentA.toFixed(1)}A`, color: '#f43f5e' }
+            ]}
+            height={230}
+          />
+        )}
+
+        {/* Tab 4: Vehicle Dynamics Hyperbolas */}
+        {activeTab === 'vehicle' && (
+          <GraphPlot
+            title="Vehicle Tractive Dynamics Under Power Constraint (Tutorial 6 Q3)"
+            subtitle="Hyperbolic push force F(v) = P/v and acceleration a(v) = P/(m·v) decaying with velocity"
+            xLabel="Vehicle Linear Velocity v"
+            xUnit="m/s"
+            yLabel="Tractive Force F (N) & Accel a (m/s²)"
+            series={vehicleSeries}
+            operatingPoint={{
+              x: params.vehicleSpeedMs,
+              y: car.accelerationMs2,
+              color: '#00f5ff',
+              label: `${params.vehicleSpeedMs} m/s: ${car.accelerationMs2.toFixed(1)} m/s²`
+            }}
+            height={230}
+          />
+        )}
+
+        {/* Tab 5: Transmission Gearbox Hyperbola */}
+        {activeTab === 'gearbox' && (
+          <GraphPlot
+            title="Ideal Gearbox Output Torque vs Shaft Speed (Tutorial 6 Q1 & Q2)"
+            subtitle="P = τ·ω = constant: Torque approaches infinity as output speed approaches zero"
+            xLabel="Output Shaft Speed"
+            xUnit="RPM"
+            yLabel="Shaft Torque τ"
+            yUnit="N·m"
+            series={gearboxSeries}
+            operatingPoint={{
+              x: Math.min(80, Math.max(2, params.outputRpm)),
+              y: motor.torqueNm,
+              color: '#f59e0b',
+              label: `${params.outputRpm} RPM: ${motor.torqueNm.toFixed(2)} N·m`
+            }}
+            referenceLines={[
+              { type: 'y', value: 9.55, label: 'Tutorial 6 Benchmark (10 RPM): 9.55 N·m', color: '#10b981' }
+            ]}
+            height={230}
+          />
+        )}
+      </div>
+
+      {/* Metrics Cards */}
       <div className="bg-space-950 p-4 rounded-xl border border-space-800 space-y-3">
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-center text-xs">
           <div className="bg-space-900 p-2.5 rounded-lg border border-space-800">
@@ -545,8 +1067,20 @@ function MotorSimulator({ params }) {
 }
 
 function LoadCellSimulator({ params }) {
+  const [activeTab, setActiveTab] = useState('graph'); // 'graph' | 'readout'
   const rawCounts = params.tareOffset + (params.appliedWeightGrams * params.calFactor);
   const calibratedWeight = (rawCounts - params.tareOffset) / params.calFactor;
+
+  const calSeries = useMemo(() => {
+    const points = [];
+    const maxW = Math.max(1000, params.appliedWeightGrams * 1.5);
+    for (let w = 0; w <= maxW; w += 50) {
+      points.push({ x: w, y: params.tareOffset + w * params.calFactor });
+    }
+    return [
+      { name: `Calibration Line (Slope = ${params.calFactor} counts/g)`, color: '#10b981', data: points, strokeWidth: 2.5 }
+    ];
+  }, [params.tareOffset, params.calFactor, params.appliedWeightGrams]);
 
   return (
     <div className="space-y-4">
@@ -560,14 +1094,62 @@ function LoadCellSimulator({ params }) {
         </span>
       </div>
 
-      <div className="bg-space-950 p-4 rounded-xl border border-space-800 grid grid-cols-2 gap-3 text-xs font-mono">
-        <div className="bg-space-900 p-3 rounded-lg border border-space-800">
-          <span className="text-slate-400 block text-[10px]">Raw 24-Bit ADC Counts:</span>
-          <span className="text-amber-400 font-bold text-sm">{Math.round(rawCounts).toLocaleString()}</span>
+      <div className="space-y-2">
+        <div className="flex flex-wrap items-center gap-1.5 bg-space-950/90 p-1.5 rounded-xl border border-space-800">
+          <button
+            onClick={() => setActiveTab('graph')}
+            className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition ${
+              activeTab === 'graph'
+                ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow-sm'
+                : 'text-slate-400 hover:text-slate-200'
+            }`}
+          >
+            <TrendingUp className="w-3.5 h-3.5" />
+            <span>ADC Counts vs Applied Mass (Calibration Line)</span>
+          </button>
+          <button
+            onClick={() => setActiveTab('readout')}
+            className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition ${
+              activeTab === 'readout'
+                ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40 shadow-sm'
+                : 'text-slate-400 hover:text-slate-200'
+            }`}
+          >
+            <Activity className="w-3.5 h-3.5" />
+            <span>Raw 24-bit Register Readout</span>
+          </button>
         </div>
-        <div className="bg-space-900 p-3 rounded-lg border border-space-800">
-          <span className="text-slate-400 block text-[10px]">Calibrated Net Weight:</span>
-          <span className="text-emerald-400 font-bold text-sm">{calibratedWeight.toFixed(1)} g</span>
+
+        {activeTab === 'graph' && (
+          <GraphPlot
+            title="HX711 24-Bit ADC Calibration Line"
+            subtitle={`Raw Counts = Tare (${params.tareOffset.toLocaleString()}) + ${params.calFactor} · Weight (g)`}
+            xLabel="Applied Mass W"
+            xUnit="g"
+            yLabel="Raw ADC Counts"
+            series={calSeries}
+            operatingPoint={{
+              x: params.appliedWeightGrams,
+              y: rawCounts,
+              color: '#10b981',
+              label: `${params.appliedWeightGrams}g: ${Math.round(rawCounts).toLocaleString()}`
+            }}
+            referenceLines={[
+              { type: 'y', value: params.tareOffset, label: `Tare = ${params.tareOffset.toLocaleString()}`, color: '#64748b' }
+            ]}
+            height={220}
+          />
+        )}
+
+        <div className="bg-space-950 p-4 rounded-xl border border-space-800 grid grid-cols-2 gap-3 text-xs font-mono">
+          <div className="bg-space-900 p-3 rounded-lg border border-space-800">
+            <span className="text-slate-400 block text-[10px]">Raw 24-Bit ADC Counts:</span>
+            <span className="text-amber-400 font-bold text-sm">{Math.round(rawCounts).toLocaleString()}</span>
+          </div>
+          <div className="bg-space-900 p-3 rounded-lg border border-space-800">
+            <span className="text-slate-400 block text-[10px]">Calibrated Net Weight:</span>
+            <span className="text-emerald-400 font-bold text-sm">{calibratedWeight.toFixed(1)} g</span>
+          </div>
         </div>
       </div>
     </div>

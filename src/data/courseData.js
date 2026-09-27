@@ -48,7 +48,7 @@ export const COURSE_MODULES = [
         },
         {
           heading: "3. Thévenin's Theorem, Load Lines & Maximum Power Transfer",
-          text: "Any linear one-port network composed of voltage sources, current sources, and resistors can be replaced at its two output terminals by an equivalent **ideal voltage source $V_{th}$ in series with a resistance $R_{th}$** (Tutorial 1 & Lecture Quiz 3):\n\n1. **Open-Circuit Voltage ($V_{open}$)**: When no load is connected ($I_o = 0$), zero current flows through $R_{th}$, so $V_{terminal} = V_{th} = V_{open}$.\n2. **Short-Circuit Current ($I_{shunt}$)**: When output terminals are shorted together ($V_{terminal} = 0$), all voltage drops across $R_{th}$: $I_{shunt} = \\frac{V_{th}}{R_{th}}$.\n3. **Thévenin Resistance**: $$R_{th} = \\frac{V_{open}}{I_{shunt}}$$\n\nThe terminal characteristic is a straight line known as the **Load Line**: $V_o = V_{th} - I_o R_{th}$.\n\n**Maximum Power Transfer Theorem:**\nHow much power is transferred to a variable load resistor $R_L$? Power is $P_L = I^2 R_L = \\left(\\frac{V_{th}}{R_{th} + R_L}\\right)^2 R_L$. Differentiating $P_L$ with respect to $R_L$ and setting $\\frac{dP_L}{dR_L} = 0$ yields:\n$$R_L = R_{th} \\implies P_{max} = \\frac{V_{th}^2}{4 R_{th}}$$\nAt maximum power transfer, exactly half the total power is dissipated internally inside the source ($50\\%$ efficiency)."
+          text: "Any linear one-port network composed of voltage sources, current sources, and resistors can be replaced at its two output terminals by an equivalent **ideal voltage source $V_{th}$ in series with a resistance $R_{th}$** (Tutorial 1 & Lecture Quiz 3):\n\n1. **Open-Circuit Voltage ($V_{open}$)**: When no load is connected ($I_o = 0$), zero current flows through $R_{th}$, so $V_{terminal} = V_{th} = V_{open}$.\n2. **Short-Circuit Current ($I_{shunt}$)**: When output terminals are shorted together ($V_{terminal} = 0$), all voltage drops across $R_{th}$: $I_{shunt} = \\frac{V_{th}}{R_{th}}$.\n3. **Thévenin Resistance**: $$R_{th} = \\frac{V_{open}}{I_{shunt}}$$\n\n**Tutorial 1 Graphical Analysis: The V-I Load Line & Q-Point Determination:**\nIn Tutorial 1, students plot two distinct lines on the same current-voltage ($I$-$V$) Cartesian coordinate plane:\n- **Source Line ($V_o$ vs $I_o$)**: The terminal characteristic of the Thévenin source is $V_o = V_{th} - I_o R_{th}$.\n  - Vertical axis intercept ($I_o = 0$): $V_o = V_{open} = V_{th}$\n  - Horizontal axis intercept ($V_o = 0$): $I_o = I_{shunt} = I_{sc} = \\frac{V_{th}}{R_{th}}$\n  - Negative slope: $\\frac{dV_o}{dI_o} = -R_{th}$\n- **Load Line ($V_L$ vs $I_L$)**: The characteristic of a connected resistive load resistor $R_L$ is $V_L = I_L R_L$, passing through origin $(0, 0)$ with positive slope $+R_L$.\n- **The Quiescent Operating Point (Q-Point)**: Because the load is wired directly across the source terminals, conservation of charge and energy requires $I_o = I_L = I_Q$ and $V_o = V_L = V_Q$. The intersection of these two lines is the simultaneous physical solution:\n$$I_Q = \\frac{V_{th}}{R_{th} + R_L}, \\quad V_Q = V_{th} \\left(\\frac{R_L}{R_{th} + R_L}\\right)$$\n*Nonlinear Loads (Diodes & LEDs):* When the load is nonlinear (such as a diode with exponential Shockley equation $I = I_S (e^{V/V_T} - 1)$), algebraic equations cannot be solved in closed elementary form. Superimposing the diode curve onto the Thévenin load line immediately yields the exact operating point at the intersection!\n\n**Maximum Power Transfer Theorem:**\nHow much power is transferred to a variable load resistor $R_L$? Power is $P_L = I^2 R_L = \\left(\\frac{V_{th}}{R_{th} + R_L}\\right)^2 R_L$. Differentiating $P_L$ with respect to $R_L$ and setting $\\frac{dP_L}{dR_L} = 0$ yields:\n$$R_L = R_{th} \\implies P_{max} = \\frac{V_{th}^2}{4 R_{th}}$$\nAt maximum power transfer, exactly half the total power is dissipated internally inside the source ($50\\%$ efficiency)."
         },
         {
           heading: "4. The Wheatstone Bridge Differential Topology (Tutorial 2)",
@@ -172,6 +172,32 @@ export const COURSE_MODULES = [
         ],
         correctIndex: 0,
         explanation: "**Step 1: Decode Significant Digits**\n- Band 1 (Brown) = Digit $1$\n- Band 2 (Black) = Digit $0$\n- Significant figures = $10$\n\n**Step 2: Decode Multiplier**\n- Band 3 (Red) = Multiplier $10^2 = 100$\n$$\\text{Nominal Resistance} = 10 \\times 100 = 1000\\ \\Omega = 1.0\\text{ k}\\Omega$$\n\n**Step 3: Decode Tolerance Band**\n- Band 4 (Gold) = Tolerance $\\pm 5\\%$\n$$\\Delta R = 1000 \\times 0.05 = 50\\ \\Omega$$\n$$\\text{Valid Range} = [950\\ \\Omega, 1050\\ \\Omega]$$"
+      },
+      {
+        id: "q-1-8",
+        type: "mcq",
+        source: "Tutorial 1 (Load Line Intersection)",
+        title: "Thevenin Load Line & Q-Point Graphical Intersection",
+        prompt: "A circuit's Thevenin source line is plotted as $V_o = 10 - 2 I_o$ on a $V$-$I$ coordinate graph. A load resistor $R_L = 3\\ \\Omega$ is connected across the terminals, represented by the load line $V_L = 3 I_L$. What is the Quiescent Operating Point (Q-point) $(I_Q, V_Q)$ at the graphical intersection?",
+        options: [
+          "$(2.0\\text{ A}, 6.0\\text{ V})$, where both source and load lines intersect.",
+          "$(5.0\\text{ A}, 10.0\\text{ V})$, the open-circuit and short-circuit intercepts.",
+          "$(3.33\\text{ A}, 3.33\\text{ V})$, assuming equal splitting between source and load.",
+          "$(1.5\\text{ A}, 4.5\\text{ V})$, the point of maximum power transfer."
+        ],
+        correctIndex: 0,
+        explanation: "**Step 1: Set Source and Load Voltages Equal**\nAt the graphical intersection (Q-point), terminal voltage and current are identical:\n$$V_o = V_L \\implies 10 - 2 I_Q = 3 I_Q$$\n$$5 I_Q = 10 \\implies I_Q = 2.0\\text{ A}$$\n\n**Step 2: Evaluate Terminal Voltage**\n$$V_Q = 3 I_Q = 3 \\times 2.0 = 6.0\\text{ V}$$\nCheck with source line: $V_Q = 10 - 2(2.0) = 6.0\\text{ V}$.\nThus, the intersection Q-point is $(2.0\\text{ A}, 6.0\\text{ V})$."
+      },
+      {
+        id: "q-1-9",
+        type: "nat",
+        source: "Tutorial 1 (Load Power from Q-Point)",
+        title: "Power Dissipated at Load Line Operating Point",
+        prompt: "For the circuit operating at the Q-point $(I_Q = 2.0\\text{ A}, V_Q = 6.0\\text{ V})$ found from the load line intersection, calculate the total power $P_L$ delivered to the load resistor in Watts.",
+        unit: "W",
+        correctAnswer: 12.0,
+        toleranceRange: [11.9, 12.1],
+        explanation: "**Step 1: Power from Q-Point Coordinates**\nAt the operating point, power delivered to the load is:\n$$P_L = V_Q \\cdot I_Q = 6.0\\text{ V} \\times 2.0\\text{ A} = 12.0\\text{ Watts}$$\nAlternatively, using $P_L = I_Q^2 R_L = (2.0)^2 \\times 3 = 4 \\times 3 = 12.0\\text{ W}$."
       }
     ],
     vault: {
@@ -179,6 +205,7 @@ export const COURSE_MODULES = [
         { name: "Ohm's Law", tex: "V = I \\cdot R \\iff I = \\frac{V}{R} \\iff R = \\frac{V}{I}" },
         { name: "Electrical Power", tex: "P = V \\cdot I = I^2 R = \\frac{V^2}{R} \\quad [\\text{Watts}]" },
         { name: "Thevenin Parameters", tex: "V_{th} = V_{open}, \\quad R_{th} = \\frac{V_{open}}{I_{shunt}}, \\quad V_o(I_o) = V_{th} - I_o R_{th}" },
+        { name: "Graphical Q-Point Intersection", tex: "I_Q = \\frac{V_{th}}{R_{th} + R_L}, \\quad V_Q = I_Q \\cdot R_L" },
         { name: "Maximum Power Transfer", tex: "P_{max} = \\frac{V_{th}^2}{4 R_{th}} \\quad (\\text{when } R_L = R_{th})" },
         { name: "Wheatstone Bridge Offset", tex: "V_0 = V_B \\left( \\frac{R_4}{R_3 + R_4} - \\frac{R_2}{R_1 + R_2} \\right)" },
         { name: "Matrix Nodal Equation", tex: "\\mathbf{G} \\mathbf{V} = \\mathbf{I}, \\quad \\sum_{j \\ne k} \\frac{V_k - V_j}{R_{kj}} = I_{k,ext}" }
@@ -734,6 +761,17 @@ export const COURSE_MODULES = [
         correctAnswer: 15.9,
         toleranceRange: [15.6, 16.2],
         explanation: "**Step 1: Rate of Change of Sinusoid**\nFor an output voltage $v_o(t) = V_p \\sin(2\\pi f t)$, the maximum slope occurs at the zero-crossings:\n$$\\left. \\frac{dv_o}{dt} \\right|_{max} = 2\\pi f V_p$$\n\n**Step 2: Slew Rate Limit Condition**\nTo avoid distortion, this slope must not exceed the slew rate $SR$:\n$$2\\pi f V_p \\le SR \\implies f_{max} = \\frac{SR}{2\\pi V_p}$$\n\n**Step 3: Numerical Substitution**\nWith $SR = 500{,}000\\text{ V/s}$ and $V_p = 5.0\\text{ V}$:\n$$f_{max} = \\frac{500{,}000}{2\\pi \\times 5.0} = \\frac{500{,}000}{31.4159} \\approx 15915\\text{ Hz} \\approx 15.9\\text{ kHz}$$"
+      },
+      {
+        id: "q-4-8",
+        type: "nat",
+        source: "Sedra/Smith Ch 2 & DC Transfer Characteristic",
+        title: "Input Saturation Limit from DC Transfer Curve",
+        prompt: "An inverting amplifier has input resistor $R_1 = 2\\text{ k}\\Omega$ and feedback resistor $R_2 = 20\\text{ k}\\Omega$, powered from dual supply rails $\\pm 10.0\\text{ V}$. From its DC transfer characteristic $V_{out}$ vs $V_{in}$, calculate the maximum positive input voltage $V_{in,max}$ in Volts before the output clips at the negative saturation rail $-10.0\\text{ V}$.",
+        unit: "V",
+        correctAnswer: 1.0,
+        toleranceRange: [0.98, 1.02],
+        explanation: "**Step 1: Inverting Linear Gain**\n$$A_v = -\\frac{R_2}{R_1} = -\\frac{20\\text{ k}\\Omega}{2\\text{ k}\\Omega} = -10\\text{ V/V}$$\n\n**Step 2: Negative Rail Saturation Threshold**\nThe output clips when linear output hits the negative supply rail:\n$$V_{out} = -10.0\\text{ V} \\implies A_v \\cdot V_{in} = -10.0\\text{ V}$$\n$$-10 \\cdot V_{in} = -10.0\\text{ V} \\implies V_{in} = +1.0\\text{ V}$$\nAny input $V_{in} > +1.0\\text{ V}$ causes the transfer curve to flatten horizontally at $-10.0\\text{ V}$."
       }
     ],
     vault: {
@@ -741,6 +779,7 @@ export const COURSE_MODULES = [
         { name: "Inverting Gain (Ideal)", tex: "G = -\\frac{R_2}{R_1}" },
         { name: "Inverting Gain (Finite A)", tex: "G = \\frac{-R_2/R_1}{1 + \\frac{1 + R_2/R_1}{A}}" },
         { name: "Non-Inverting Gain", tex: "G = 1 + \\frac{R_2}{R_1}" },
+        { name: "DC Transfer Characteristic", tex: "V_{out}(V_{in}) = \\operatorname{clamp}\\left(-V_{sat}, +V_{sat}, -\\frac{R_2}{R_1} V_{in}\\right)" },
         { name: "Gain-Bandwidth Product", tex: "A_{CL} \\cdot f_c = \\text{GBWP} \\implies f_c = \\frac{\\text{GBWP}}{|A_{CL}|}" },
         { name: "Full-Power Bandwidth (Slew Rate)", tex: "f_{max} = \\frac{SR}{2\\pi V_p} \\quad [\\text{Hz}]" },
         { name: "Summing Amplifier", tex: "V_{out} = -R_f \\sum_{k} \\frac{V_k}{R_k}" }
@@ -809,6 +848,10 @@ export const COURSE_MODULES = [
         {
           heading: "6. Reflected Inertia in Transmissions & Battery Discharge Dynamics",
           text: "When an electric motor accelerates a high-inertia robot joint through a transmission, what inertia does the motor rotor actually feel? This concept of **Reflected Inertia** governs the acceleration and bandwidth of robotic actuators.\n\n**Derivation of Reflected Inertia:**\nConsider an arm link with rotational inertia $J_{load}$ coupled to a motor through a gearbox of reduction ratio $N = \\frac{\\omega_{motor}}{\\omega_{load}}$.\nThe total kinetic energy in the rotating system is:\n$$E_k = \\frac{1}{2} J_{motor} \\omega_{motor}^2 + \\frac{1}{2} J_{load} \\omega_{load}^2$$\nSubstituting $\\omega_{load} = \\frac{\\omega_{motor}}{N}$:\n$$E_k = \\frac{1}{2} \\left( J_{motor} + \\frac{J_{load}}{N^2} \\right) \\omega_{motor}^2$$\nTherefore, the effective inertia reflected to the motor shaft is:\n$$J_{ref} = \\frac{J_{load}}{N^2}$$\n*A 10:1 reduction ratio ($N = 10$) reduces the apparent load inertia felt by the motor by a factor of $100$ ($N^2$)!* This dramatic attenuation allows miniature, low-torque DC motors to accelerate heavy robotic limbs smoothly.\n\n**Real Battery Discharge Characteristics (Tutorial 5 Q5):**\nUnlike ideal voltage sources, electrochemical cells exhibit finite internal Thevenin impedance $r_b$ and rate-dependent capacity (Peukert's law). The terminal load voltage is:\n$$V_L = V_{open\\_circuit} - I \\cdot r_b$$\nWhen high motor stall currents are drawn, internal impedance causes severe voltage sag, frequently browning out the microcontroller. A pack of 3 standard alkaline AA batteries ($3 \\times 1.5\\text{ V} = 4.5\\text{ V}$) delivers $\\approx 2500\\text{ mAh}$ at modest discharge rates, providing up to $11.25\\text{ Wh}$ of energy—powering a $150\\text{ mW}$ Raspberry Pi Pico for over $68\\text{ hours}$ of continuous operation."
+        },
+        {
+          heading: "7. DC Motor Graphical Analysis: Torque-Speed, Power Parabola, Current & Efficiency Curves",
+          text: "Mastering mechatronic actuators requires interpreting the five canonical curves plotted on Cartesian speed axes $\\omega$ and velocity axes $v$:\n\n**1. The Linear Torque-Speed Characteristic ($\\tau$ vs $\\omega$):**\nRearranging the armature loop equation $V_s = I R_a + k_e \\omega$ for current and substituting into torque $\\tau = k_t I$ produces the downward-sloping linear load line:\n$$\\tau(\\omega) = \\frac{k_t V_s}{R_a} - \\left(\\frac{k_t k_e}{R_a}\\right)\\omega = \\tau_{stall} \\left(1 - \\frac{\\omega}{\\omega_{no\\_load}}\\right)$$\n- **Negative Slope ($-\\frac{k_t k_e}{R_a}$)**: Represents back-EMF velocity damping. Steeper slope means stiffer speed regulation against external load variations.\n- **Stall Torque ($\\tau_{stall} = \\frac{k_t V_s}{R_a}$)**: Maximum torque produced at zero rotational velocity ($\\omega = 0$).\n- **No-Load Speed ($\\omega_{no\\_load} = \\frac{V_s}{k_e}$)**: Maximum shaft speed reached when external resisting torque is zero.\n- **Load Matching Intersection**: When driving an external physical load, the steady-state cruising point is found graphically by plotting the load characteristic on the same axes. For a constant coulomb friction load (horizontal line $\\tau_{load} = C$) or a fan aerodynamic propeller load (quadratic parabola $\\tau_{load} = c_d \\omega^2$), the intersection with the motor load line determines the exact steady-state operating point $\\omega_{cruise}$.\n\n**2. The Mechanical Power Parabola ($P$ vs $\\omega$):**\nMechanical output power is the product of shaft torque and angular velocity:\n$$P_{mech}(\\omega) = \\tau(\\omega) \\cdot \\omega = \\tau_{stall} \\left(\\omega - \\frac{\\omega^2}{\\omega_{no\\_load}}\\right)$$\nThis forms an inverted parabola passing through $(0, 0)$ and $(\\omega_{no\\_load}, 0)$:\n- Differentiating $\\frac{dP}{d\\omega} = \\tau_{stall} \\left(1 - \\frac{2\\omega}{\\omega_{no\\_load}}\\right) = 0$ identifies the peak output operating point:\n$$\\omega^* = \\frac{\\omega_{no\\_load}}{2}, \\quad \\tau^* = \\frac{\\tau_{stall}}{2}$$\n$$P_{max} = \\tau^* \\cdot \\omega^* = \\frac{\\tau_{stall} \\cdot \\omega_{no\\_load}}{4} = \\frac{V_s^2}{4 R_a}$$\n- **Two Operational Regimes**:\n  - *Regime I ($0 \\le \\omega < \\omega^*/2$)*: Dangerous high-torque/low-speed region. Armature current is high ($I > 0.75 I_{stall}$), electromechanical efficiency is low ($< 25\\%$), and $I^2 R_a$ thermal dissipation is maximized. Continuous operation here burns the rotor insulation!\n  - *Regime II ($\\omega^* < \\omega \\le 0.9 \\omega_{no\\_load}$)*: Safe continuous operating region. High back-EMF limits current draw, minimizing thermal stress.\n\n**3. The Armature Current Line ($I$ vs $\\omega$):**\nBecause electrical current is directly proportional to torque ($I = \\tau / k_t$):\n$$I(\\omega) = \\frac{V_s - k_e \\omega}{R_a} = I_{stall} \\left(1 - \\frac{\\omega}{\\omega_{no\\_load}}\\right)$$\nThe current curve is a straight line sloping downward from $I_{stall} = \\frac{V_s}{R_a}$ down to no-load current $I_{no\\_load} \\approx 0$.\n\n**4. The Conversion Efficiency Curve ($\\eta$ vs $\\omega$):**\nElectromechanical conversion efficiency is the ratio of net mechanical power to electrical input power:\n$$\\eta(\\omega) = \\frac{P_{mech}(\\omega)}{P_{elec}(\\omega)} = \\frac{\\tau(\\omega) \\cdot \\omega}{V_s \\cdot I(\\omega)}$$\n- At stall ($\\omega = 0$), $\\eta = 0\\%$ because zero mechanical work is delivered despite massive electrical power intake ($V_s I_{stall}$).\n- At the maximum power operating point ($\\omega = \\omega_{no\\_load} / 2$), theoretical efficiency is exactly $50\\%$.\n- **Peak Efficiency Operating Point**: Peak efficiency (typically $75\\%-85\\%$) does NOT occur at $P_{max}$; it occurs at high speed (roughly $80\\%-85\\%$ of $\\omega_{no\\_load}$), where torque is moderate but $I^2 R_a$ Joule heating is negligible.\n- At no-load ($\\omega = \\omega_{no\\_load}$), efficiency drops back to $0\\%$ because net shaft output torque is zero.\n\n**5. Vehicle Tractive Force & Acceleration Curves ($F$ vs $v$ and $a$ vs $v$):**\nAt the vehicle drive wheels, constant power delivery translates to tractive force and acceleration:\n$$F(v) = \\frac{P}{v}, \\quad a(v) = \\frac{P}{m \\cdot v}$$\nPlotting $F$ vs $v$ yields a rectangular hyperbola. While mathematical force approaches infinity as $v \\to 0$, real physical robots are capped at low speeds by tire traction ($F_{traction} = \\mu m g$) and motor stall torque ($F_{stall} = \\frac{\\tau_{stall} N}{r_{wheel}}$), preventing infinite wheel slip."
         }
       ]
     },
@@ -819,12 +862,14 @@ export const COURSE_MODULES = [
       controls: [
         { id: "motorPowerWatts", label: "Motor Power (Watts)", min: 1, max: 100, step: 1, default: 10, unit: "W" },
         { id: "outputRpm", label: "Gearbox Output Speed", min: 1, max: 500, step: 1, default: 10, unit: "RPM" },
+        { id: "supplyVoltage", label: "Motor Supply Voltage", min: 3, max: 36, step: 1, default: 12, unit: "V" },
+        { id: "armatureResistance", label: "Armature Resistance Ra", min: 0.5, max: 10, step: 0.5, default: 2.0, unit: "Ω" },
         { id: "vehicleSpeedMs", label: "Vehicle Velocity", min: 0.2, max: 10, step: 0.2, default: 1.0, unit: "m/s" },
         { id: "vehicleMassKg", label: "Vehicle Mass", min: 0.5, max: 10, step: 0.5, default: 1.0, unit: "kg" }
       ],
       quickQuest: {
         prompt: "From Tutorial 6: Set motor power to 10W and gearbox output speed to 10 RPM. Observe how output torque reaches exactly 9.55 N·m!",
-        loadParams: { motorPowerWatts: 10, outputRpm: 10, vehicleSpeedMs: 1.0, vehicleMassKg: 1.0 },
+        loadParams: { motorPowerWatts: 10, outputRpm: 10, supplyVoltage: 12, armatureResistance: 2.0, vehicleSpeedMs: 1.0, vehicleMassKg: 1.0 },
         expectedSummary: "Omega = 1.047 rad/s. Torque = 10W / 1.047 rad/s = 9.55 N·m. Vehicle acceleration at 1 m/s = 10 m/s²."
       }
     },
@@ -917,15 +962,55 @@ export const COURSE_MODULES = [
         ],
         correctIndex: 0,
         explanation: "**Step 1: Kinetic Energy Equivalence**\nThe rotational kinetic energy of the load is:\n$$E_{k, load} = \\frac{1}{2} J_{load} \\omega_{load}^2$$\n\n**Step 2: Relate Load Speed to Motor Speed**\nSince $\\omega_{load} = \\frac{\\omega_{motor}}{N}$:\n$$E_{k, load} = \\frac{1}{2} J_{load} \\left( \\frac{\\omega_{motor}}{N} \\right)^2 = \\frac{1}{2} \\left( \\frac{J_{load}}{N^2} \\right) \\omega_{motor}^2$$\n\n**Step 3: Calculate Reflected Inertia**\nThe apparent inertia reflected to the motor rotor is:\n$$J_{ref} = \\frac{J_{load}}{N^2} = \\frac{0.50\\text{ kg}\\cdot\\text{m}^2}{10^2} = \\frac{0.50}{100} = 0.0050\\text{ kg}\\cdot\\text{m}^2$$\nGear reduction dramatically reduces the inertia the motor rotor must accelerate!"
+      },
+      {
+        id: "q-5-8",
+        type: "nat",
+        source: "DC Motor P-ω Graphical Analysis",
+        title: "Maximum Power Point on Motor P-ω Parabola",
+        prompt: "A DC motor's mechanical power is plotted against angular velocity $\\omega$. The curve forms an inverted parabola $P(\\omega) = \\tau_{stall}(\\omega - \\frac{\\omega^2}{\\omega_{no\\_load}})$. If $\\tau_{stall} = 4.0\\text{ N}\\cdot\\text{m}$ and $\\omega_{no\\_load} = 200\\text{ rad/s}$, calculate the shaft speed $\\omega^*$ in $\\text{rad/s}$ at which peak power $P_{max}$ occurs.",
+        unit: "rad/s",
+        correctAnswer: 100,
+        toleranceRange: [98, 102],
+        explanation: "**Step 1: Parabola Vertex Condition**\nThe peak of the quadratic power parabola occurs at exactly half of the no-load speed:\n$$\\omega^* = \\frac{\\omega_{no\\_load}}{2} = \\frac{200\\text{ rad/s}}{2} = 100\\text{ rad/s}$$\n\n**Step 2: Peak Power Verification**\n$$\\tau^* = \\frac{\\tau_{stall}}{2} = \\frac{4.0}{2} = 2.0\\text{ N}\\cdot\\text{m}$$\n$$P_{max} = \\tau^* \\cdot \\omega^* = 2.0 \\times 100 = 200\\text{ Watts}$$"
+      },
+      {
+        id: "q-5-9",
+        type: "mcq",
+        source: "DC Motor Efficiency vs Power Curves",
+        title: "Peak Efficiency Speed vs Peak Power Speed",
+        prompt: "On the characteristic curves of a permanent-magnet DC motor, where does the operating point of maximum electromechanical conversion efficiency ($\\eta_{max}$) occur relative to the maximum power operating point ($\\omega^* = \\omega_{no\\_load}/2$)?",
+        options: [
+          "At a higher shaft speed (typically around $75\\%-85\\%$ of $\\omega_{no\\_load}$), where current and $I^2 R_a$ thermal losses are much lower.",
+          "At the exact same speed $\\omega^* = \\omega_{no\\_load}/2$, because power and efficiency peak together.",
+          "At zero speed (stall condition), because torque is maximized.",
+          "At no-load speed $\\omega_{no\\_load}$, because back-EMF cancels all voltage."
+        ],
+        correctIndex: 0,
+        explanation: "**Step 1: Efficiency vs Speed Formulation**\n$$\\eta(\\omega) = \\frac{\\tau(\\omega) \\cdot \\omega}{V_s \\cdot I(\\omega)}$$\nAt maximum power speed ($\\omega^* = \\omega_{no\\_load}/2$), efficiency is only $50\\%$ because substantial armature current ($I = I_{stall}/2$) causes significant $I^2 R_a$ Joule heating.\n\n**Step 2: Location of Peak Efficiency**\nAs speed increases above $\\omega^*$, current falls linearly, causing thermal copper losses ($I^2 R_a$) to drop quadratically. Consequently, peak efficiency (often $75\\%-85\\%$) occurs at higher speeds near $80\\%-85\\%$ of no-load speed, before falling to $0\\%$ at no-load."
+      },
+      {
+        id: "q-5-10",
+        type: "nat",
+        source: "Tutorial 6 (Load Matching on τ-ω Plane)",
+        title: "Steady-State Speed from Motor & Load Torque Intersection",
+        prompt: "A DC motor has a linear torque-speed characteristic $\\tau(\\omega) = 12 - 0.04\\omega$ (where torque is in $\\text{N}\\cdot\\text{m}$ and $\\omega$ in $\\text{rad/s}$). It drives a conveyor belt exerting a constant resisting load torque $\\tau_{load} = 4.0\\text{ N}\\cdot\\text{m}$. Find the steady-state rotational speed $\\omega_{cruise}$ in $\\text{rad/s}$ at the graphical intersection.",
+        unit: "rad/s",
+        correctAnswer: 200,
+        toleranceRange: [198, 202],
+        explanation: "**Step 1: Set Motor Torque Equal to Load Torque**\nIn steady-state operation with zero angular acceleration ($J \\frac{d\\omega}{dt} = \\tau_{motor} - \\tau_{load} = 0$):\n$$\\tau(\\omega) = \\tau_{load}$$\n$$12 - 0.04\\omega = 4.0$$\n\n**Step 2: Solve for Cruising Speed**\n$$0.04\\omega = 12 - 4.0 = 8.0$$\n$$\\omega = \\frac{8.0}{0.04} = 200\\text{ rad/s}$$"
       }
     ],
     vault: {
       formulas: [
         { name: "Rotational Power", tex: "P = \\tau \\cdot \\omega \\quad [\\text{Watts} = \\text{N}\\cdot\\text{m} \\cdot \\text{rad/s}]" },
+        { name: "Motor Torque-Speed Characteristic", tex: "\\tau(\\omega) = \\tau_{stall} \\left(1 - \\frac{\\omega}{\\omega_{no\\_load}}\\right) = \\frac{k_t V_s}{R_a} - \\frac{k_t k_e}{R_a} \\omega" },
+        { name: "Mechanical Power Parabola", tex: "P(\\omega) = \\tau_{stall} \\left(\\omega - \\frac{\\omega^2}{\\omega_{no\\_load}}\\right) \\implies P_{max} = \\frac{\\tau_{stall} \\cdot \\omega_{no\\_load}}{4}" },
+        { name: "Current-Speed Characteristic", tex: "I(\\omega) = \\frac{V_s - k_e \\omega}{R_a} = I_{stall}\\left(1 - \\frac{\\omega}{\\omega_{no\\_load}}\\right)" },
+        { name: "Electromechanical Efficiency", tex: "\\eta(\\omega) = \\frac{P_{mech}}{P_{elec}} = \\frac{\\tau \\cdot \\omega}{V_s \\cdot I}" },
         { name: "Angular Velocity from RPM", tex: "\\omega = \\text{RPM} \\times \\frac{2\\pi}{60} = \\frac{\\pi \\cdot \\text{RPM}}{30} \\quad [\\text{rad/s}]" },
         { name: "Tractive Power & Acceleration", tex: "P = F \\cdot v = (m \\cdot a) \\cdot v \\implies a = \\frac{P}{m \\cdot v}" },
         { name: "DC Motor Voltage Equilibrium", tex: "V = I R_a + k_e \\omega, \\quad \\tau = k_t I - \\tau_{friction}" },
-        { name: "Maximum Mechanical Power", tex: "P_{max} = \\frac{\\tau_{stall} \\cdot \\omega_{no\\_load}}{4}" },
         { name: "Reflected Rotational Inertia", tex: "J_{ref} = \\frac{J_{load}}{N^2}" },
         { name: "Water Vaporization Energy", tex: "Q = m \\cdot (c_p \\Delta T + L_v) \\approx m \\cdot (75 + 540) \\cdot 4.184\\text{ J/g}" }
       ],
