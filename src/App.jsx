@@ -160,7 +160,7 @@ export function App() {
           {/* Accessible Engineering Footer */}
           <footer className="bg-space-900 border-t border-space-800 py-6 px-4 text-center text-xs text-slate-400 space-y-2 mt-auto">
             <p>
-              <strong className="text-slate-200">{COURSE_INFO.code}: {COURSE_INFO.title}</strong> • {COURSE_INFO.institution} • {COURSE_INFO.semester}
+              <strong className="text-slate-200">{COURSE_INFO.title}</strong> — {COURSE_INFO.tagline}
             </p>
             <p className="text-[11px] text-slate-500">
               Built following the <em>Active Computational Learning Blueprint</em>. Questions sourced directly from Lecture Quizzes, Tutorials 1-6, Labs 1-7, and Gittaly notes.

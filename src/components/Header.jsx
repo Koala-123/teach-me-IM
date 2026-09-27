@@ -32,14 +32,14 @@ export function Header({
           <div>
             <div className="flex items-center space-x-2">
               <span className="text-[10px] sm:text-xs font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-cyan-950/80 text-cyan-400 border border-cyan-800/60">
-                {COURSE_INFO.code}
-              </span>
-              <span className="text-xs text-slate-400 hidden lg:inline">
-                {COURSE_INFO.institution} • {COURSE_INFO.semester}
+                {COURSE_INFO.topicPill}
               </span>
             </div>
             <h1 className="text-sm sm:text-base font-bold text-slate-100 flex items-center gap-2">
               {COURSE_INFO.title}
+              <span className="hidden lg:inline text-xs text-slate-400 font-normal">
+                • {COURSE_INFO.tagline}
+              </span>
             </h1>
           </div>
         </div>

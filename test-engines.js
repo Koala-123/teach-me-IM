@@ -4,6 +4,7 @@
  */
 
 import assert from 'assert';
+import katex from 'katex';
 import { calculateOhmsLaw, seriesResistance, parallelResistance, voltageDivider, theveninModel, wheatstoneBridge, solveLinearSystem } from './src/engines/circuitEngine.js';
 import { rawAdcToVoltage, voltageToRawAdc, simulatePotentiometer, calculateLedResistor, evaluatePinSafety } from './src/engines/picoEngine.js';
 import { speedOfSound, calculateUltrasonicDistance, distanceToEchoTime, calculateEchoDivider, simulateIrSensor, mapAnalogIrSensor } from './src/engines/sensorEngine.js';
@@ -267,6 +268,49 @@ for (const mod of COURSE_MODULES) {
     }
   }
 }
+
+// 8. KaTeX Syntax Verification across all curriculum text
+runTest("KaTeX Mathematical Syntax Validation Across All Curriculum", () => {
+  let mathCount = 0;
+  function verifyMath(text, context) {
+    if (!text || typeof text !== 'string') return;
+    const regex = /\$\$([\s\S]*?)\$\$|\$([^\$\n]+?)\$/g;
+    let m;
+    while ((m = regex.exec(text)) !== null) {
+      mathCount++;
+      const isBlock = m[1] !== undefined;
+      const latex = (isBlock ? m[1] : m[2]).trim();
+      try {
+        katex.renderToString(latex, { displayMode: isBlock, throwOnError: true });
+      } catch (err) {
+        throw new Error(`In [${context}]: KaTeX failed on "${latex}" -> ${err.message}`);
+      }
+    }
+  }
+
+  for (const mod of COURSE_MODULES) {
+    mod.coreInvariants.forEach((inv, i) => verifyMath(inv, `${mod.id} coreInvariant[${i}]`));
+    mod.commonPitfalls.forEach((pit, i) => verifyMath(pit, `${mod.id} pitfall[${i}]`));
+    verifyMath(mod.story.summary, `${mod.id} summary`);
+    mod.story.sections.forEach((sec, i) => {
+      verifyMath(sec.heading, `${mod.id} section[${i}] heading`);
+      verifyMath(sec.text, `${mod.id} section[${i}] text`);
+    });
+    mod.practiceQuestions.forEach((q) => {
+      verifyMath(q.title, `${q.id} title`);
+      verifyMath(q.prompt, `${q.id} prompt`);
+      if (q.options) q.options.forEach((opt, oi) => verifyMath(opt, `${q.id} option[${oi}]`));
+      verifyMath(q.explanation, `${q.id} explanation`);
+    });
+    mod.vault.formulas.forEach((f) => {
+      verifyMath(`$$${f.tex}$$`, `${mod.id} formula ${f.name}`);
+    });
+    mod.vault.pitfalls.forEach((p, i) => {
+      verifyMath(p.desc, `${mod.id} vault pitfall[${i}]`);
+    });
+  }
+  assert(mathCount > 50, `Expected at least 50 math expressions, found ${mathCount}`);
+});
 
 console.log(`  ✅ Successfully verified ${COURSE_MODULES.length} course modules and ${totalQuestions} authentic course questions across MCQs, MSQs, and NATs!`);
 

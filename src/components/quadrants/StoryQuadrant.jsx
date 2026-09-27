@@ -69,12 +69,8 @@ export function StoryQuadrant({ module, onProceedToLab }) {
               </h2>
             </div>
             
-            <div className="text-sm sm:text-base text-slate-300 leading-relaxed space-y-3 font-normal">
-              {sec.text.split('\n\n').map((paragraph, pIdx) => (
-                <p key={pIdx}>
-                  <MathView text={paragraph} />
-                </p>
-              ))}
+            <div className="text-sm sm:text-base text-slate-300 leading-relaxed font-normal">
+              <MathView text={sec.text} />
             </div>
           </article>
         ))}

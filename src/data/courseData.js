@@ -10,21 +10,9 @@
  */
 
 export const COURSE_INFO = {
-  code: "FM214",
-  title: "Intelligent Machines (IM)",
-  semester: "Monsoon Semester AY 2026-2027",
-  institution: "Plaksha University",
-  credits: 4,
-  instructors: [
-    { name: "Andy Ruina", role: "Professor", email: "Andy.Ruina@plaksha.edu.in", office: "A4 - G1" },
-    { name: "Sandeep Manjaana", role: "Professor", email: "sandeep.Manjaana@plaksha.edu.in", office: "A4 - 008" },
-    { name: "Gittaly Dhingra", role: "Course Instructor", email: "gittaly.dhingra@plaksha.edu.in", office: "A4 - Office Area" },
-    { name: "Amrit Kaur", role: "Teaching Fellow", email: "amrit.kaur@plaksha.edu.in", office: "A4 - Office Area" }
-  ],
-  gradingPolicy: {
-    rule: "Grade based on best 12 of 15 numbers with drop-the-lowest components across lecture quizzes (n-4 best), homework (best 12 of 15), labs (best 10 of 13), tutorials (best 11 of 14), 2 midterm exam questions (10 pts each), 4 final exam questions (11 pts each), and project.",
-    medianGrade: "B"
-  }
+  title: "Intelligent Machines",
+  tagline: "Autonomous Systems, Sensing, Actuation & Robotics",
+  topicPill: "Mechatronics & Robotics"
 };
 
 export const COURSE_MODULES = [

@@ -458,12 +458,8 @@ export function PracticeArenaQuadrant({
                     <Sparkles className="w-4 h-4" />
                     <span>Step-by-Step Mathematical Derivation</span>
                   </div>
-                  <div className="text-xs sm:text-sm text-slate-300 leading-relaxed space-y-2 font-normal">
-                    {question.explanation.split('\n\n').map((para, pIdx) => (
-                      <p key={pIdx}>
-                        <MathView text={para} />
-                      </p>
-                    ))}
+                  <div className="text-xs sm:text-sm text-slate-300 leading-relaxed font-normal">
+                    <MathView text={question.explanation} />
                   </div>
                 </div>
               )}
