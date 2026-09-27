@@ -1,8 +1,10 @@
 import React, { useMemo } from 'react';
+import { MathView } from '../../utils/mathView';
 
 /**
  * Reusable, responsive SVG Graph Plotter for physical & mechatronic curves.
  * Supports:
+ * - Mathematical governing equations rendered via KaTeX
  * - Multiple continuous data series with custom colors and stroke styles
  * - Shaded fill areas (e.g. under power curve or blind zones)
  * - Reference horizontal/vertical threshold lines
@@ -12,6 +14,7 @@ import React, { useMemo } from 'react';
 export function GraphPlot({
   title,
   subtitle,
+  equations = [], // Array of LaTeX/Markdown math strings or single string
   xLabel,
   yLabel,
   xUnit = '',
@@ -156,6 +159,23 @@ export function GraphPlot({
           </div>
         )}
       </div>
+
+      {/* Mathematical Governing Equations Banner */}
+      {equations && (Array.isArray(equations) ? equations.length > 0 : Boolean(equations)) && (
+        <div className="my-2 px-3 py-2 rounded-xl bg-space-900/90 border border-cyan-800/40 shadow-inner">
+          <div className="flex items-center gap-1.5 text-[10px] font-bold text-cyan-400 uppercase tracking-wider mb-1">
+            <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></span>
+            <span>Mathematical Curve Model & Live Evaluation</span>
+          </div>
+          <div className="space-y-1 text-slate-200">
+            {(Array.isArray(equations) ? equations : [equations]).map((eq, eIdx) => (
+              <div key={eIdx} className="overflow-x-auto py-0.5 text-xs">
+                <MathView text={eq} />
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* SVG Canvas */}
       <div className="w-full overflow-hidden">

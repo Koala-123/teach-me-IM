@@ -325,6 +325,10 @@ function CircuitSimulator({ params }) {
           <GraphPlot
             title="Thévenin Load Line & Operating Q-Point"
             subtitle="Source characteristic Vo = Vth - I·Rth intersecting load resistor characteristic VL = I·RL"
+            equations={[
+              "$$\\text{Source: } V_o(I) = V_{th} - I \\cdot R_{th} \\quad \\Big| \\quad \\text{Load: } V_L(I) = I \\cdot R_L$$",
+              `$$\\text{Live Evaluation: } V_o = ${vth} - ${rth} I_o\\text{ [V]}, \\quad V_L = ${rl} I_L\\text{ [V]} \\implies Q = (${loadResult.iOut.toFixed(2)}\\text{ A}, ${loadResult.vOut.toFixed(2)}\\text{ V})$$`
+            ]}
             xLabel="Load Current I"
             xUnit="A"
             yLabel="Terminal Voltage V"
@@ -349,6 +353,10 @@ function CircuitSimulator({ params }) {
           <GraphPlot
             title="Maximum Power Transfer Characteristic"
             subtitle="Delivered load power PL = I²·RL peaking strictly when RL = Rth (Tutorial 1 & 2)"
+            equations={[
+              "$$P_L(R_L) = I_L^2 R_L = \\left(\\frac{V_{th}}{R_{th} + R_L}\\right)^2 R_L \\implies P_{max} = \\frac{V_{th}^2}{4 R_{th}} \\quad (\\text{at } R_L = R_{th})$$",
+              `$$\\text{Live Evaluation: } P_L(R_L) = \\left(\\frac{${vth}}{${rth} + R_L}\\right)^2 R_L\\text{ [W]} \\implies P_{max} = \\frac{${vth}^2}{4 \\times ${rth}} = ${maxPowerTheoretical.toFixed(2)}\\text{ W at } R_L = ${rth}\\,\\Omega$$`
+            ]}
             xLabel="Load Resistance RL"
             xUnit="Ω"
             yLabel="Load Power PL"
@@ -571,6 +579,10 @@ function SensorSimulator({ params }) {
           <GraphPlot
             title="Ultrasonic Acoustic Time-of-Flight Characteristic"
             subtitle={`Round-trip propagation t = 2d / c with 2cm transducer blind zone (${params.airTempC}°C)`}
+            equations={[
+              "$$t(d) = \\frac{2 \\cdot d}{c} \\quad \\text{where } c \\approx 331.3 + 0.606 \\cdot T_{celsius} \\; [\\text{m/s}]$$",
+              `$$\\text{Live Evaluation: } t(d) = \\frac{2 \\cdot d}{${sonar.speedOfSoundMs.toFixed(1)}\\text{ m/s}} = ${(20000 / sonar.speedOfSoundMs).toFixed(2)} \\times d\\,(\\text{cm}) \\; [\\mu\\text{s}] \\quad (\\text{Blind Zone: } 0 < d \\le 2\\text{ cm})$$`
+            ]}
             xLabel="Target Distance d"
             xUnit="cm"
             yLabel="Round-trip Echo Time t"
@@ -715,6 +727,10 @@ function OpAmpSimulator({ params }) {
           <GraphPlot
             title="Inverting Op-Amp DC Transfer Characteristic"
             subtitle={`Linear slope Av = -R2/R1 = ${gain.toFixed(1)}x clamped at power rails ±${vcc}V (Sedra/Smith Ch 2)`}
+            equations={[
+              "$$V_{out}(V_{in}) = \\operatorname{clamp}\\left(-V_{sat},\\, +V_{sat},\\, -\\frac{R_2}{R_1} V_{in}\\right) \\quad \\text{where } A_v = -\\frac{R_2}{R_1}$$",
+              `$$\\text{Live Evaluation: } V_{out} = \\operatorname{clamp}\\left(-${vcc}\\text{V},\\, +${vcc}\\text{V},\\, ${gain.toFixed(1)} \\cdot V_{in}\\right) \\quad (\\text{Linear Threshold: } |V_{in}| \\le ${(vcc / Math.abs(gain)).toFixed(2)}\\text{ V})$$`
+            ]}
             xLabel="Input Voltage Vin"
             xUnit="V"
             yLabel="Output Voltage Vout"
@@ -927,6 +943,10 @@ function MotorSimulator({ params }) {
           <GraphPlot
             title="DC Motor Mechanical Power Curve P(ω)"
             subtitle="Quadratic parabola P(ω) = τ_stall·(ω - ω²/ω_no_load) peaking strictly at ω = ω_no_load / 2"
+            equations={[
+              "$$P_{mech}(\\omega) = \\tau(\\omega) \\cdot \\omega = \\tau_{stall}\\left(\\omega - \\frac{\\omega^2}{\\omega_{no\\_load}}\\right) \\implies P_{max} = \\frac{\\tau_{stall} \\cdot \\omega_{no\\_load}}{4} = \\frac{V_s^2}{4 R_a}$$",
+              `$$\\text{Live Evaluation: } P(\\omega) = ${stallTorqueNm.toFixed(2)}\\left(\\omega - \\frac{\\omega^2}{${noLoadOmegaRadS.toFixed(0)}}\\right) \\text{ [W]} \\implies P_{max} = ${pMaxWatts.toFixed(1)}\\text{ W at } \\omega^* = ${optimalOmega.toFixed(0)}\\text{ rad/s}$$`
+            ]}
             xLabel="Shaft Angular Velocity ω"
             xUnit="rad/s"
             yLabel="Mechanical Power P"
@@ -951,6 +971,10 @@ function MotorSimulator({ params }) {
           <GraphPlot
             title="DC Motor Torque-Speed Characteristic τ(ω)"
             subtitle="Linear load line τ(ω) = τ_stall·(1 - ω/ω_no_load) with negative back-EMF slope -kt·ke/Ra"
+            equations={[
+              "$$\\tau(\\omega) = \\frac{k_t V_s}{R_a} - \\left(\\frac{k_t k_e}{R_a}\\right)\\omega = \\tau_{stall}\\left(1 - \\frac{\\omega}{\\omega_{no\\_load}}\\right)$$",
+              `$$\\text{Live Evaluation: } \\tau(\\omega) = ${stallTorqueNm.toFixed(2)}\\left(1 - \\frac{\\omega}{${noLoadOmegaRadS.toFixed(0)}}\\right) \\text{ [N}\\cdot\\text{m]} \\quad \\left(\\text{Slope } m = -${(kt * ke / ra).toFixed(5)}\\text{ N}\\cdot\\text{m}/(\\text{rad/s})\\right)$$`
+            ]}
             xLabel="Shaft Angular Velocity ω"
             xUnit="rad/s"
             yLabel="Shaft Torque τ"
@@ -975,6 +999,10 @@ function MotorSimulator({ params }) {
           <GraphPlot
             title="Armature Current I(ω) & Electromechanical Efficiency η(ω)"
             subtitle="Efficiency peaks at high speed (~80% of ω_no_load); drops to 0% at stall and at no-load"
+            equations={[
+              "$$I(\\omega) = \\frac{V_s - k_e \\omega}{R_a} = I_{stall}\\left(1 - \\frac{\\omega}{\\omega_{no\\_load}}\\right), \\quad \\eta(\\omega) = \\frac{P_{mech}}{P_{elec}} = \\frac{\\tau \\cdot \\omega}{V_s \\cdot I}$$",
+              `$$\\text{Live Evaluation: } I(\\omega) = ${stallCurrentA.toFixed(1)}\\left(1 - \\frac{\\omega}{${noLoadOmegaRadS.toFixed(0)}}\\right) \\text{ [A]}, \\quad P_{elec} = ${vs}\\text{V} \\cdot I(\\omega) \\text{ [W]}$$`
+            ]}
             xLabel="Shaft Angular Velocity ω"
             xUnit="rad/s"
             yLabel="Current I (A) & Efficiency η (%)"
@@ -997,6 +1025,10 @@ function MotorSimulator({ params }) {
           <GraphPlot
             title="Vehicle Tractive Dynamics Under Power Constraint (Tutorial 6 Q3)"
             subtitle="Hyperbolic push force F(v) = P/v and acceleration a(v) = P/(m·v) decaying with velocity"
+            equations={[
+              "$$F(v) = \\frac{P}{v} \\; [\\text{N}], \\quad a(v) = \\frac{F(v)}{m} = \\frac{P}{m \\cdot v} \\; [\\text{m/s}^2]$$",
+              `$$\\text{Live Evaluation: } F(v) = \\frac{${params.motorPowerWatts}}{v} \\text{ [N]}, \\quad a(v) = \\frac{${(params.motorPowerWatts / params.vehicleMassKg).toFixed(1)}}{v} \\text{ [m/s}^2] \\quad (m = ${params.vehicleMassKg}\\text{ kg})$$`
+            ]}
             xLabel="Vehicle Linear Velocity v"
             xUnit="m/s"
             yLabel="Tractive Force F (N) & Accel a (m/s²)"
@@ -1016,6 +1048,10 @@ function MotorSimulator({ params }) {
           <GraphPlot
             title="Ideal Gearbox Output Torque vs Shaft Speed (Tutorial 6 Q1 & Q2)"
             subtitle="P = τ·ω = constant: Torque approaches infinity as output speed approaches zero"
+            equations={[
+              "$$\\tau = \\frac{P}{\\omega} = \\frac{60 \\cdot P}{2\\pi \\cdot \\text{RPM}} \\approx \\frac{9.5493 \\cdot P}{\\text{RPM}} \\; [\\text{N}\\cdot\\text{m}]$$",
+              `$$\\text{Live Evaluation: } \\tau(\\text{RPM}) = \\frac{${(9.5493 * params.motorPowerWatts).toFixed(1)}}{\\text{RPM}} \\text{ [N}\\cdot\\text{m]} \\quad (\\text{At 10 RPM: } \\tau = ${(9.5493 * params.motorPowerWatts / 10).toFixed(2)}\\text{ N}\\cdot\\text{m})$$`
+            ]}
             xLabel="Output Shaft Speed"
             xUnit="RPM"
             yLabel="Shaft Torque τ"
@@ -1124,6 +1160,10 @@ function LoadCellSimulator({ params }) {
           <GraphPlot
             title="HX711 24-Bit ADC Calibration Line"
             subtitle={`Raw Counts = Tare (${params.tareOffset.toLocaleString()}) + ${params.calFactor} · Weight (g)`}
+            equations={[
+              "$$\\text{Counts}(W) = \\text{Tare} + k \\cdot W \\iff W = \\frac{\\text{Counts} - \\text{Tare}}{k}$$",
+              `$$\\text{Live Evaluation: } \\text{Counts}(W) = ${params.tareOffset.toLocaleString()} + ${params.calFactor} \\cdot W\\,(\\text{g}) \\quad (k = ${params.calFactor}\\text{ counts/g})$$`
+            ]}
             xLabel="Applied Mass W"
             xUnit="g"
             yLabel="Raw ADC Counts"
