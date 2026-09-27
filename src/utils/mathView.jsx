@@ -13,14 +13,17 @@ marked.setOptions({
  * Ensures math is extracted before markdown parsing so that underscores (_),
  * asterisks (*), and other LaTeX tokens are never mangled by Markdown.
  */
-export function renderMarkdownAndMath(text = "", isBlockOnly = false) {
+export function renderMarkdownAndMath(text = "", options = {}) {
   if (!text || typeof text !== 'string') return "";
 
+  const trimmed = text.trim();
+
   // Fast path for isolated block math (e.g. formula cards: "$$formula$$")
-  if (isBlockOnly || (text.startsWith("$$") && text.endsWith("$$") && text.indexOf("$$", 2) === text.length - 2)) {
-    const rawLatex = text.replace(/^\$\$|\$\$$/g, "").trim();
+  if (options.isRawFormula || (trimmed.startsWith("$$") && trimmed.endsWith("$$") && trimmed.indexOf("$$", 2) === trimmed.length - 2)) {
+    const rawLatex = trimmed.replace(/^\$\$|\$\$$/g, "").trim();
     try {
-      return katex.renderToString(rawLatex, { displayMode: true, throwOnError: false });
+      const html = katex.renderToString(rawLatex, { displayMode: true, throwOnError: false });
+      return `<div class="katex-display-container my-3 overflow-x-auto text-center">${html}</div>`;
     } catch {
       return `<pre class="text-rose-400 font-mono text-xs">${rawLatex}</pre>`;
     }
@@ -38,7 +41,8 @@ export function renderMarkdownAndMath(text = "", isBlockOnly = false) {
       html = match;
     }
     mathPlaceholders.push({ html, isBlock: true });
-    return `%%KATEX_BLOCK_TOKEN_${index}%%`;
+    // Surround with double newlines so marked treats it as an isolated block
+    return `\n\n%%KATEX_BLOCK_TOKEN_${index}%%\n\n`;
   });
 
   // 2. Extract and replace inline math $...$
@@ -61,14 +65,11 @@ export function renderMarkdownAndMath(text = "", isBlockOnly = false) {
   mathPlaceholders.forEach((item, index) => {
     if (item.isBlock) {
       const blockToken = `%%KATEX_BLOCK_TOKEN_${index}%%`;
+      const replacement = `<div class="katex-display-container my-3 overflow-x-auto text-center">${item.html}</div>`;
       // Unwrap <p>%%KATEX_BLOCK_TOKEN_i%%</p> to prevent invalid nested block layout
       const pRegex = new RegExp(`<p>\\s*${blockToken}\\s*<\\/p>`, 'g');
-      const replacement = `<div class="katex-display-container my-3 overflow-x-auto text-center">${item.html}</div>`;
-      if (pRegex.test(parsedHtml)) {
-        parsedHtml = parsedHtml.replace(pRegex, replacement);
-      } else {
-        parsedHtml = parsedHtml.replaceAll(blockToken, replacement);
-      }
+      parsedHtml = parsedHtml.replace(pRegex, replacement);
+      parsedHtml = parsedHtml.replaceAll(blockToken, replacement);
     } else {
       const inlineToken = `%%KATEX_INLINE_TOKEN_${index}%%`;
       const replacement = `<span class="katex-inline-container inline-block align-baseline mx-0.5">${item.html}</span>`;
@@ -82,17 +83,34 @@ export function renderMarkdownAndMath(text = "", isBlockOnly = false) {
 /**
  * MathView Component
  * Renders rich Markdown and KaTeX math seamlessly.
+ * Defaults to block display so paragraphs and newlines format properly.
  */
-export function MathView({ text = "", className = "", block = false }) {
+export function MathView({ text = "", className = "", inline = false, block = true, isRawFormula = false }) {
+  const isInline = inline || block === false;
+
   const html = useMemo(() => {
-    return renderMarkdownAndMath(text, block);
-  }, [text, block]);
+    let result = renderMarkdownAndMath(text, { isRawFormula });
+    if (isInline && result) {
+      // Strip outer <p> ... </p> for true inline usage (e.g. single-line labels)
+      result = result.replace(/^<p>/, '').replace(/<\/p>\s*$/, '');
+    }
+    return result;
+  }, [text, isInline, isRawFormula]);
 
   if (!html) return null;
 
+  if (isInline) {
+    return (
+      <span
+        className={`math-markdown-content inline ${className}`}
+        dangerouslySetInnerHTML={{ __html: html }}
+      />
+    );
+  }
+
   return (
     <div
-      className={`math-markdown-content leading-relaxed ${className} ${block ? 'block' : 'inline'}`}
+      className={`math-markdown-content leading-relaxed block ${className}`}
       dangerouslySetInnerHTML={{ __html: html }}
     />
   );

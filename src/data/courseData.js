@@ -1,12 +1,12 @@
 /**
- * Comprehensive Course Curriculum and Question Bank for Intelligent Machines (FM214)
+ * Comprehensive Course Curriculum and Question Bank for Intelligent Machines
  * Faithfully constructed from:
- * - Lecture Quizzes.pdf (Quizzes 1 - 10)
- * - Tutorials (1).pdf (Tutorials 1 - 6)
- * - Gittaly.pdf (Pico, Ultrasonic, IR, Op-Amp questions)
- * - Labs.pdf (Labs 1 - 7)
- * - 3 OpAmpIntro.pdf (Sedra/Smith Chapter 2)
- * - Course Outline IM (1).pdf
+ * - Lecture Quizzes (Quizzes 1 - 10)
+ * - Tutorials (Tutorials 1 - 6)
+ * - Gittaly Notes & Exercises (Pico, Ultrasonic, IR, Op-Amp questions)
+ * - Laboratory Practicals (Labs 1 - 7)
+ * - Sedra/Smith Chapter 2 (Operational Amplifiers)
+ * - Course Outline
  */
 
 export const COURSE_INFO = {
@@ -25,12 +25,12 @@ export const COURSE_MODULES = [
     badge: "Hardware Core",
     icon: "Cpu",
     coreInvariants: [
-      "Kirchhoff's Current Law (KCL): The algebraic sum of currents entering any circuit node is strictly zero: \\sum I_{in} = 0.",
-      "Thevenin Equivalence: Any linear one-port resistive network can be replaced by an ideal voltage source V_{th} = V_{open} in series with resistance R_{th} = V_{open} / I_{shunt}.",
-      "Load Line Invariant: The terminal voltage of a non-ideal source decreases linearly with current: V_o = V_{th} - I_o R_{th}."
+      "Kirchhoff's Current Law (KCL): The algebraic sum of currents entering any circuit node is strictly zero: $\\sum I_{in} = 0$.",
+      "Thevenin Equivalence: Any linear one-port resistive network can be replaced by an ideal voltage source $V_{th} = V_{open}$ in series with resistance $R_{th} = \\frac{V_{open}}{I_{shunt}}$.",
+      "Load Line Invariant: The terminal voltage of a non-ideal source decreases linearly with current: $V_o = V_{th} - I_o R_{th}$."
     ],
     commonPitfalls: [
-      "Assuming high output impedance is desirable for a voltage source. A high R_O causes terminal voltage to collapse under load!",
+      "Assuming high output impedance is desirable for a voltage source. A high $R_O$ causes terminal voltage to collapse under load!",
       "Confusing nodal voltage (potential relative to common ground) with voltage drops across individual branch resistors.",
       "Thinking a pull-up resistor can revive a circuit where the output node is tied directly to ground (Lecture Quiz 6 nonsense trap)."
     ],
@@ -39,19 +39,19 @@ export const COURSE_MODULES = [
       sections: [
         {
           heading: "1. The Fundamental Hydraulics: Volts, Amps, and Ohms",
-          text: "Think of an electrical circuit as a pressurized closed hydraulic loop. **Voltage** ($V$) in Volts is the water pressure difference produced by the pump (battery). **Current** ($I$) in Amperes is the volume flow rate of charges ($1\\text{ A} = 1\\text{ Coulomb/second}$). **Resistance** ($R$) in Ohms ($\\Omega$) is the constriction inside the pipe that dissipates energy as heat. Ohm's Law states the direct linear relation: $V = I \\cdot R$. Power dissipated is the rate of energy transformation: $P = V \\cdot I = I^2 R = \\frac{V^2}{R}$ Watts."
+          text: "Think of an electrical circuit as a pressurized closed hydraulic loop:\n\n- **Voltage ($V$)**: The electric potential difference (pressure) produced by the source, measured in Volts ($1\\text{ V} = 1\\text{ Joule/Coulomb}$).\n- **Current ($I$)**: The volume flow rate of electric charge ($1\\text{ A} = 1\\text{ Coulomb/second}$), measured in Amperes.\n- **Resistance ($R$)**: The constriction inside the conductor that dissipates energy as heat, measured in Ohms ($\\Omega$).\n\n**Fundamental Circuit Equations:**\n- **Ohm's Law**: $V = I \\cdot R$\n- **Joule's Power Dissipation**: $P = V \\cdot I = I^2 R = \\frac{V^2}{R}\\text{ Watts}$."
         },
         {
           heading: "2. Thevenin's Theorem & The Load Line",
-          text: "Any complex circuit of batteries and resistors accessible via two terminals behaves externally as a single voltage source $V_{th}$ in series with an internal resistance $R_{th}$. As derived in Lecture Quiz 3 and Tutorial 1:\n\n1. **Open-Circuit Voltage** ($V_{open}$): When no load is connected ($I_o = 0$), no voltage drops across $R_{th}$. Hence, $V_{open} = V_{th}$.\n2. **Short-Circuit Current** ($I_{shunt}$): When terminals are shorted ($V_o = 0$), $I_{shunt} = \\frac{V_{th}}{R_{th}}$.\n3. **Thevenin Resistance**: $R_{th} = \\frac{V_{open}}{I_{shunt}}$.\n\nThe terminal characteristic is the straight load line: $V_o = V_{th} - I_o R_{th}$. When connected to a measurement device or load $R_i$, the terminal voltage is $V_i = V_{th} \\frac{R_i}{R_{th} + R_i}$."
+          text: "Any complex circuit of batteries and resistors accessible via two terminals behaves externally as a single voltage source $V_{th}$ in series with an internal resistance $R_{th}$. As derived in Lecture Quiz 3 and Tutorial 1:\n\n1. **Open-Circuit Voltage** ($V_{open}$): When no load is connected ($I_o = 0$), no voltage drops across $R_{th}$. Hence, $V_{open} = V_{th}$.\n\n2. **Short-Circuit Current** ($I_{shunt}$): When terminals are shorted ($V_o = 0$), $I_{shunt} = \\frac{V_{th}}{R_{th}}$.\n\n3. **Thevenin Resistance**: $R_{th} = \\frac{V_{open}}{I_{shunt}}$.\n\nThe terminal characteristic is the straight load line: $V_o = V_{th} - I_o R_{th}$. When connected to a measurement device or load $R_i$, the terminal voltage is:\n$$V_i = V_{th} \\frac{R_i}{R_{th} + R_i}$$"
         },
         {
           heading: "3. Systematic Nodal Analysis via Matrices (Quiz 5)",
-          text: "For complex networks (such as the 6-node bridge circuit in Lecture Quiz 5), manual loop equations become error-prone. The robust engineering technique is **Nodal Analysis**:\n- Select a reference node as Ground ($V_0 = 0\\text{ V}$).\n- Label all $N$ unknown node voltages $V_1, V_2, \\dots, V_N$.\n- At each node $k$, write Kirchhoff's Current Law: $\\sum_{j} \\frac{V_k - V_j}{R_{kj}} = I_{k,ext}$.\n- This yields a system of linear equations $[G][V] = [I]$, where $G$ is the conductance matrix. Inverting or solving via Gaussian elimination yields all node potentials instantaneously."
+          text: "For complex networks (such as the 6-node bridge circuit in Lecture Quiz 5), manual loop equations become error-prone. The robust engineering technique is **Nodal Analysis**:\n\n- Select a reference node as Ground ($V_0 = 0\\text{ V}$).\n- Label all $N$ unknown node voltages $V_1, V_2, \\dots, V_N$.\n- At each node $k$, write Kirchhoff's Current Law: $\\sum_{j} \\frac{V_k - V_j}{R_{kj}} = I_{k,ext}$.\n\nThis yields a system of linear equations $[G][V] = [I]$, where $G$ is the conductance matrix. Inverting or solving via Gaussian elimination yields all node potentials instantaneously."
         },
         {
           heading: "4. The Impedance Matching Principle",
-          text: "Why do we desire **low output impedance** ($R_O \\approx 0$) for signal sources and power supplies, but **high input impedance** ($R_i \\gg R_O$) for measuring instruments like voltmeters and microcontrollers? Because $V_{measured} = V_{source} \\frac{R_i}{R_O + R_i}$. If $R_O$ is significant or $R_i$ is low, the meter severely 'loads' the circuit, causing the measured voltage to drop far below the true open-circuit voltage!"
+          text: "Why do we desire **low output impedance** ($R_O \\approx 0$) for signal sources and power supplies, but **high input impedance** ($R_i \\gg R_O$) for measuring instruments like voltmeters and microcontrollers?\n\nBecause: $$V_{measured} = V_{source} \\frac{R_i}{R_O + R_i}$$\n\nIf $R_O$ is significant or $R_i$ is low, the meter severely 'loads' the circuit, causing the measured voltage to drop far below the true open-circuit voltage!"
         }
       ]
     },
@@ -84,7 +84,7 @@ export const COURSE_MODULES = [
           "$I = \\frac{V}{R_1 \\parallel R_2}$, splitting equally between the two branches."
         ],
         correctIndex: 0,
-        explanation: "By Kirchhoff's Current Law, in a single series loop there is only one conductive path for charge flow. Thus, the exact same current $I$ must pass sequentially through both resistors. The total equivalent resistance is $R_{eq} = R_1 + R_2$. By Ohm's law, $I = \\frac{V}{R_1 + R_2}$."
+        explanation: "**Step 1: Series Conservation of Charge**\nBy Kirchhoff's Current Law, in a single series loop there is only one continuous conductive path for charge flow. Thus, the exact same current $I$ must pass sequentially through both resistors.\n\n**Step 2: Equivalent Resistance & Current**\nThe total equivalent resistance is:\n$$R_{eq} = R_1 + R_2$$\n\nApplying Ohm's law across the series combination:\n$$I = \\frac{V}{R_1 + R_2}$$"
       },
       {
         id: "q-1-2",
@@ -95,7 +95,7 @@ export const COURSE_MODULES = [
         unit: "A",
         correctAnswer: 2.5,
         toleranceRange: [2.49, 2.51],
-        explanation: "The load line equation is $V_o = V_{th} - I_o R_{th}$. Under short-circuit conditions, terminal voltage $V_o = 0\\text{ V}$. Setting $0 = 5 - 2 \\cdot I_{shunt} \\implies I_{shunt} = \\frac{5}{2} = 2.5\\text{ A}$."
+        explanation: "**Step 1: Thevenin Terminal Relationship**\nThe terminal load line equation is:\n$$V_o = V_{th} - I_o R_{th}$$\n\n**Step 2: Short-Circuit Condition**\nUnder short-circuit conditions, the output terminals are connected together directly, forcing terminal voltage $V_o = 0\\text{ V}$.\n\n**Step 3: Calculating $I_{shunt}$**\n$$0 = 5\\text{ V} - (2\\ \\Omega) \\cdot I_{shunt}$$\n$$I_{shunt} = \\frac{5}{2} = 2.5\\text{ A}$$"
       },
       {
         id: "q-1-3",
@@ -110,7 +110,7 @@ export const COURSE_MODULES = [
           "A high $R_O$ and low $R_i$ maximizes the voltage transferred to the voltmeter."
         ],
         correctIndices: [0, 1, 2],
-        explanation: "The voltage across the load is given by the voltage divider $V_i = V_{ON} \\frac{R_i}{R_O + R_i} = \\frac{V_{ON}}{1 + R_O / R_i}$. For $V_i \\approx V_{ON}$, we require $\\frac{R_O}{R_i} \\to 0$, which mandates low output impedance ($R_O \\ll R_i$) and high input impedance ($R_i \\gg R_O$)."
+        explanation: "**Step 1: Voltage Divider Derivation**\nThe voltage delivered across the load or measurement meter is:\n$$V_i = V_{ON} \\frac{R_i}{R_O + R_i} = \\frac{V_{ON}}{1 + R_O / R_i}$$\n\n**Step 2: Minimizing Measurement Loading**\nTo measure the true open-circuit voltage ($V_i \\approx V_{ON}$):\n- We require the loading ratio $\\frac{R_O}{R_i} \\to 0$.\n- Hence, the source must have **low output impedance** ($R_O \\ll R_i$).\n- The meter must have **high input impedance** ($R_i \\gg R_O$) to draw negligible current ($I_{meter} \\approx 0$).\n\nStatement 4 is incorrect because high $R_O$ and low $R_i$ would maximize voltage drop inside the source, collapsing the measured signal."
       },
       {
         id: "q-1-4",
@@ -125,7 +125,7 @@ export const COURSE_MODULES = [
           "No, because pull-up resistors are only compatible with 3.3V systems, not 5V."
         ],
         correctIndex: 0,
-        explanation: "As Professor Ruina noted: 'As written, this question is nonsense. The output is grounded no matter the position of the switch. A pullup resistor can’t fix this problem.' If an output node is physically hardwired to ground, adding a pull-up resistor creates a path from $V_{CC}$ to ground through the resistor, burning power while keeping $V_{node} = 0\\text{ V}$."
+        explanation: "**Step 1: Physical Node Analysis**\nAs Professor Ruina noted: *'As written, this question is nonsense. The output is grounded no matter the position of the switch. A pullup resistor can’t fix this problem.'*\n\n**Step 2: Effect of Pull-Up on a Hard Ground**\nIf an output node is physically hardwired to ground, adding a pull-up resistor to $5\\text{ V}$ simply creates a current path from $V_{CC}$ through the $10\\text{ k}\\Omega$ resistor directly into ground.\n\nThis dissipates $P = \\frac{V^2}{R} = \\frac{25}{10000} = 2.5\\text{ mW}$ of power while the output terminal potential remains strictly pinned at $0\\text{ V}$."
       },
       {
         id: "q-1-5",
@@ -136,7 +136,7 @@ export const COURSE_MODULES = [
         unit: "V",
         correctAnswer: 0.455,
         toleranceRange: [0.44, 0.47],
-        explanation: "Leg 1 potential: $V_1 = V_B \\frac{R_{1G}}{R_{1B} + R_{1G}} = 10 \\cdot \\frac{1000}{2000} = 5.0\\text{ V}$. Leg 2 potential: $V_2 = V_B \\frac{R_{2G}}{R_{2B} + R_{2G}} = 10 \\cdot \\frac{1200}{1000 + 1200} = 10 \\cdot \\frac{1200}{2200} = 5.4545\\text{ V}$. The differential open-circuit voltage is $V_0 = V_2 - V_1 = 5.4545 - 5.0 = 0.4545\\text{ V}$."
+        explanation: "**Step 1: Leg 1 Node Potential**\nLeg 1 acts as a voltage divider from $V_B = 10\\text{ V}$:\n$$V_1 = V_B \\frac{R_{1G}}{R_{1B} + R_{1G}} = 10 \\cdot \\frac{1000}{1000 + 1000} = 5.0\\text{ V}$$\n\n**Step 2: Leg 2 Node Potential**\nLeg 2 acts as a parallel divider from $V_B = 10\\text{ V}$:\n$$V_2 = V_B \\frac{R_{2G}}{R_{2B} + R_{2G}} = 10 \\cdot \\frac{1200}{1000 + 1200} = 10 \\cdot \\frac{12}{22} \\approx 5.4545\\text{ V}$$\n\n**Step 3: Differential Bridge Output**\nThe open-circuit differential voltage is:\n$$V_0 = V_2 - V_1 = 5.4545\\text{ V} - 5.0\\text{ V} \\approx 0.455\\text{ V}$$"
       }
     ],
     vault: {
@@ -172,9 +172,9 @@ export const COURSE_MODULES = [
     badge: "Silicon & I/O",
     icon: "CircuitBoard",
     coreInvariants: [
-      "GPIO Voltage Limit: RP2040 GPIO pins operate strictly at 3.3V logic. Exceeding 3.6V triggers ESD latch-up and destroys the pin.",
+      "GPIO Voltage Limit: RP2040 GPIO pins operate strictly at $3.3\\text{ V}$ logic. Exceeding $3.6\\text{ V}$ triggers ESD latch-up and destroys the pin.",
       "Power Rail Segregation: Never power inductive loads (motors, solenoids) from the 3V3_OUT regulator pin. Inductive flyback and voltage sags trigger brown-out resets.",
-      "ADC Mapping Law: 12-bit native ADC produces integer values 0-4095; MicroPython read_u16() scales this to 0-65535, corresponding linearly to 0V - 3.3V."
+      "ADC Mapping Law: 12-bit native ADC produces integer values $0 - 4095$; MicroPython `read_u16()` scales this to $0 - 65535$, corresponding linearly to $0\\text{ V} - 3.3\\text{ V}$."
     ],
     commonPitfalls: [
       "Wiring an LED directly between a GPIO pin and GND without a current-limiting ballast resistor (fries the GPIO FET).",
@@ -186,19 +186,19 @@ export const COURSE_MODULES = [
       sections: [
         {
           heading: "1. The Anatomy of the RP2040 Silicon",
-          text: "Unlike a full computer (like a Raspberry Pi 4 running Linux OS with display output and multi-second boot sequences), the **Raspberry Pi Pico** is a bare-metal **microcontroller**. It executes firmware immediately upon power-up with microsecond deterministic timing. It features:\n- Dual-core ARM Cortex-M0+ running at 133 MHz.\n- 264 KB on-chip SRAM across 6 independent banks.\n- 2 MB external QSPI Flash memory for program storage.\n- 30 multi-function GPIO pins, of which 26 are broken out on header pins."
+          text: "Unlike a full computer (like a Raspberry Pi 4 running Linux OS with display output and multi-second boot sequences), the **Raspberry Pi Pico** is a bare-metal **microcontroller**. It executes firmware immediately upon power-up with microsecond deterministic timing.\n\n**Core Silicon Specifications:**\n- Dual-core ARM Cortex-M0+ running at 133 MHz.\n- 264 KB on-chip SRAM across 6 independent banks.\n- 2 MB external QSPI Flash memory for program storage.\n- 30 multi-function GPIO pins, of which 26 are broken out on header pins."
         },
         {
           heading: "2. The Critical Pin Families (Tutorial 3)",
-          text: "Mastering the Pico pinout is essential for mechatronic design:\n- **GP0 to GP22, GP26-GP28**: 3.3V General-Purpose Input/Output pins.\n- **GP25**: Hardwired internally on the Pico board to the green user LED. Because it has an onboard trace to the LED, it serves as a visual heartbeat/debugging indicator and is not brought out to the edge headers!\n- **VBUS (Pin 40)**: 5V direct power from the micro-USB cable. Can source up to 500mA from the host computer.\n- **VSYS (Pin 39)**: Main system power input (1.8V to 5.5V) feeding the onboard RT6150 buck-boost Switch-Mode Power Supply (SMPS). Powering via batteries requires feeding VSYS (often through a Schottky diode).\n- **3V3_OUT (Pin 36)**: Regulated 3.3V output from the SMPS. Supplies the RP2040 and external low-power sensors (up to ~300mA total).\n- **3V3_EN (Pin 37)**: Active-high enable pin for the SMPS. Pulling it to GND shuts down the 3.3V regulator.\n- **ADC0 (GP26), ADC1 (GP27), ADC2 (GP28)**: 12-bit analog input channels (0 to 3.3V). ADC4 is connected internally to an on-chip silicon temperature sensor."
+          text: "Mastering the Pico pinout is essential for mechatronic design:\n\n- **GP0 to GP22, GP26-GP28**: 3.3V General-Purpose Input/Output pins.\n- **GP25**: Hardwired internally on the Pico board to the green user LED. Because it has an onboard trace to the LED, it serves as a visual heartbeat/debugging indicator and is not brought out to the edge headers!\n- **VBUS (Pin 40)**: 5V direct power from the micro-USB cable. Can source up to 500mA from the host computer.\n- **VSYS (Pin 39)**: Main system power input ($1.8\\text{ V}$ to $5.5\\text{ V}$) feeding the onboard RT6150 buck-boost Switch-Mode Power Supply (SMPS). Powering via batteries requires feeding VSYS (often through a Schottky diode).\n- **3V3_OUT (Pin 36)**: Regulated 3.3V output from the SMPS. Supplies the RP2040 and external low-power sensors (up to ~300mA total).\n- **3V3_EN (Pin 37)**: Active-high enable pin for the SMPS. Pulling it to GND shuts down the 3.3V regulator.\n- **ADC0 (GP26), ADC1 (GP27), ADC2 (GP28)**: 12-bit analog input channels ($0$ to $3.3\\text{ V}$). ADC4 is connected internally to an on-chip silicon temperature sensor."
         },
         {
           heading: "3. Ballast Resistors & The Blinking LED (Gittaly Pico Q2)",
-          text: "Why does an LED burn out if connected directly across a 3.3V GPIO pin and Ground? A diode is an exponential device: once forward bias exceeds $V_F \\approx 2.0\\text{ V}$, dynamic internal resistance drops to near zero. Without a resistor, the GPIO output transistor attempts to deliver infinite current, exceeding its 16mA maximum rating and burning the silicon!\n\nThe required series resistor is given by Ohm's Law:\n$$R = \\frac{V_{supply} - V_F}{I_F} = \\frac{3.3\\text{ V} - 2.0\\text{ V}}{0.020\\text{ A}} = 65\\ \\Omega$$\nWe select the standard resistor value $68\\ \\Omega$ or $100\\ \\Omega$."
+          text: "Why does an LED burn out if connected directly across a 3.3V GPIO pin and Ground? A diode is an exponential device: once forward bias exceeds $V_F \\approx 2.0\\text{ V}$, dynamic internal resistance drops to near zero.\n\nWithout a resistor, the GPIO output transistor attempts to deliver infinite current, exceeding its 16mA maximum rating and burning the silicon!\n\nThe required series resistor is given by Ohm's Law:\n$$R = \\frac{V_{supply} - V_F}{I_F} = \\frac{3.3\\text{ V} - 2.0\\text{ V}}{0.020\\text{ A}} = 65\\ \\Omega$$\nWe select the standard resistor value $68\\ \\Omega$ or $100\\ \\Omega$."
         },
         {
           heading: "4. The 3-Terminal Potentiometer vs Variable Resistor (Gittaly Pico Q5)",
-          text: "If you connect only two pins of a potentiometer (wiper and one end), you have a variable series resistor ($R_{var}$). But if the microcontroller ADC has infinite input impedance ($I_{ADC} = 0$), no current flows, so there is zero voltage drop across $R_{var}$—the ADC reads 3.3V everywhere!\n\nConnecting all three pins (Top to 3.3V, Bottom to GND, Wiper to ADC) forms a true **variable voltage divider**. Current continuously flows through the resistive track, establishing a linear potential gradient. At 30% rotation from GND, the wiper reads exactly $V = 0.30 \\times 3.3\\text{ V} = 0.99\\text{ V}$. In MicroPython `read_u16()`, this corresponds to raw integer $0.30 \\times 65535 \\approx 19660$."
+          text: "If you connect only two pins of a potentiometer (wiper and one end), you have a variable series resistor ($R_{var}$). But if the microcontroller ADC has infinite input impedance ($I_{ADC} = 0$), no current flows, so there is zero voltage drop across $R_{var}$—the ADC reads 3.3V everywhere!\n\nConnecting all three pins (Top to 3.3V, Bottom to GND, Wiper to ADC) forms a true **variable voltage divider**. Current continuously flows through the resistive track, establishing a linear potential gradient.\n\nAt 30% rotation from GND, the wiper reads exactly:\n$$V = 0.30 \\times 3.3\\text{ V} = 0.99\\text{ V}$$\n\nIn MicroPython `read_u16()`, this corresponds to raw integer:\n$$\\text{Raw} = 0.30 \\times 65535 \\approx 19660$$"
         }
       ]
     },
@@ -231,7 +231,7 @@ export const COURSE_MODULES = [
           "It is the internal hardware reset pin connected directly to the RUN line."
         ],
         correctIndex: 0,
-        explanation: "On the standard Raspberry Pi Pico, GP25 is wired directly to the onboard surface-mount green LED. Because it is routed internally on the PCB, it is not brought out to the physical pin headers (pins 1–40). It is universally used as a 'heartbeat' status indicator to confirm firmware execution without external breadboard wiring."
+        explanation: "**Step 1: Architecture of GP25**\nOn the standard Raspberry Pi Pico, GP25 is wired directly to the onboard surface-mount green LED.\n\n**Step 2: Header Isolation & Purpose**\nBecause it is routed internally on the PCB, GP25 is not brought out to the physical pin headers (pins 1–40). It serves universally as a 'heartbeat' status indicator to confirm firmware execution without external breadboard wiring."
       },
       {
         id: "q-2-2",
@@ -242,7 +242,7 @@ export const COURSE_MODULES = [
         unit: "Ω",
         correctAnswer: 65,
         toleranceRange: [64, 66],
-        explanation: "By Kirchhoff's Voltage Law: $V_{GPIO} = V_R + V_F \\implies V_R = 3.3\\text{ V} - 2.0\\text{ V} = 1.3\\text{ V}$. By Ohm's Law: $R = \\frac{V_R}{I_F} = \\frac{1.3\\text{ V}}{0.020\\text{ A}} = 65\\ \\Omega$."
+        explanation: "**Step 1: Kirchhoff's Voltage Law**\nAround the GPIO output loop, the supply voltage drops across the series ballast resistor and the LED forward junction:\n$$V_{GPIO} = V_R + V_F \\implies V_R = 3.3\\text{ V} - 2.0\\text{ V} = 1.3\\text{ V}$$\n\n**Step 2: Resistor Calculation via Ohm's Law**\nTo guarantee forward operating current $I_F = 20\\text{ mA} = 0.020\\text{ A}$:\n$$R = \\frac{V_R}{I_F} = \\frac{1.3\\text{ V}}{0.020\\text{ A}} = 65\\ \\Omega$$"
       },
       {
         id: "q-2-3",
@@ -253,7 +253,7 @@ export const COURSE_MODULES = [
         unit: "raw units",
         correctAnswer: 19660,
         toleranceRange: [19600, 19700],
-        explanation: "Wiper voltage is $V_{wiper} = 0.30 \\times 3.3\\text{ V} = 0.99\\text{ V}$. MicroPython scales the 12-bit ADC reading across the full 16-bit integer range ($0$ to $65535$): $\\text{Raw} = 0.30 \\times 65535 = 19660.5 \\approx 19660$."
+        explanation: "**Step 1: Wiper Potential Calculation**\nWith all three terminals connected across GND and $3.3\\text{ V}$, the potential is strictly linear with wiper fraction:\n$$V_{wiper} = 0.30 \\times 3.3\\text{ V} = 0.99\\text{ V}$$\n\n**Step 2: MicroPython 16-Bit Quantization**\nMicroPython maps the input range $0 - 3.3\\text{ V}$ to the full 16-bit integer scale ($0$ to $65535$):\n$$\\text{Raw} = 0.30 \\times 65535 = 19660.5 \\approx 19660$$\n(In underlying hardware, the 12-bit ADC reads $0.30 \\times 4095 \\approx 1228$)."
       },
       {
         id: "q-2-4",
@@ -268,7 +268,7 @@ export const COURSE_MODULES = [
           "The 3V3_OUT pin is AC-coupled and only outputs high-frequency RF signals."
         ],
         correctIndices: [0, 1, 2],
-        explanation: "Motors must always be powered from a dedicated external power rail (e.g. 5V VBUS or separate battery pack) through a motor driver (H-bridge) with flyback diodes, sharing a common ground with the Pico."
+        explanation: "**Step 1: Regulator Thermal Overload**\nThe onboard RT6150 buck-boost regulator has a strict thermal limit (~300mA for external loads) and will shut down if overloaded.\n\n**Step 2: Voltage Sags & Inductive Spikes**\nMotors draw massive stall currents (> 1A), pulling the 3.3V rail down and triggering Brown-Out Reset (BOR) on the microcontroller. Furthermore, motor coils generate inductive flyback spikes ($V = -L \\frac{di}{dt}$) that destroy silicon gates.\n\n**Step 3: Best Practice**\nMotors must always be powered from a dedicated external power rail (e.g. 5V VBUS or separate battery pack) through an H-bridge driver with flyback protection, sharing common ground with the Pico."
       },
       {
         id: "q-2-5",
@@ -283,7 +283,7 @@ export const COURSE_MODULES = [
           "3V3_EN (Pin 37), which forces the power chip into battery mode."
         ],
         correctIndex: 0,
-        explanation: "VSYS (Pin 39) is the main system input designed to accept any supply between 1.8V and 5.5V. The onboard RT6150 buck-boost SMPS regulates VSYS to provide a clean 3.3V to the RP2040 chip."
+        explanation: "**Step 1: System Power Input Architecture**\nVSYS (Pin 39) is the main system input designed to accept any supply between $1.8\\text{ V}$ and $5.5\\text{ V}$.\n\n**Step 2: Role of Buck-Boost Regulator**\nThe onboard RT6150 buck-boost SMPS regulates VSYS to provide a clean $3.3\\text{ V}$ to the RP2040 chip, even as battery voltage sags from $4.5\\text{ V}$ down to $2.0\\text{ V}$."
       }
     ],
     vault: {
@@ -318,37 +318,37 @@ export const COURSE_MODULES = [
     badge: "Sensors Core",
     icon: "Radar",
     coreInvariants: [
-      "Time-of-Flight (ToF) Sound Travel: Distance = (Echo Pulse Width × Speed of Sound) / 2. Division by 2 is mandatory for round-trip propagation.",
-      "Ultrasonic Blind Zone Invariant: Echoes returning within ~150µs (< 2.5cm) overlap with piezoelectric transducer mechanical ring-down, yielding corrupt garbage readings.",
-      "Optical Reflection Duality: Specular reflection on shiny surfaces obeys θ_r = θ_i (bouncing IR away from angled receiver), whereas matte surfaces exhibit Lambertian diffuse scattering."
+      "Time-of-Flight (ToF) Sound Travel: Distance is proportional to round-trip propagation: $\\text{Distance} = \\frac{t_{echo} \\cdot v_{sound}}{2}$. Division by 2 is mandatory because the acoustic wave traverses the distance twice.",
+      "Ultrasonic Blind Zone Invariant: Echoes returning within $\\sim 150\\,\\mu\\text{s}$ ($< 2.5\\text{ cm}$) overlap with piezoelectric transducer mechanical ring-down, yielding corrupt garbage readings.",
+      "Optical Reflection Duality: Specular reflection on shiny surfaces obeys $\\theta_r = \\theta_i$ (bouncing IR away from an angled receiver), whereas matte surfaces exhibit Lambertian diffuse scattering."
     ],
     commonPitfalls: [
       "Connecting the HC-SR04 5V Echo output directly to the Pico GPIO without a 2-resistor voltage divider.",
       "Expecting an ultrasonic sensor to detect sound-absorbing acoustic foam or soft pillows (acoustically invisible due to lack of reflection).",
-      "Confusing the LM393 IR sensitivity potentiometer with a range amplifier; it merely adjusts the comparator DC threshold voltage V_ref."
+      "Confusing the LM393 IR sensitivity potentiometer with a range amplifier; it merely adjusts the comparator DC threshold voltage $V_{ref}$."
     ],
     story: {
       summary: "Explore how autonomous machines perceive spatial boundaries. We dissect the acoustic physics of the HC-SR04 ultrasonic transducer and the optical scattering of infrared proximity sensors, as explored in Labs 4-5 and Gittaly notes.",
       sections: [
         {
           heading: "1. The HC-SR04 Ultrasonic Sonar: Time of Flight",
-          text: "How does a bat fly in pitch darkness or a car detect obstacles while reversing? By **echolocation**. The HC-SR04 module features two piezoelectric transducers: a transmitter (speaker) and a receiver (microphone).\n\n**The 4-Step Measurement Cycle**:\n1. The Pico sends a $10\\,\\mu\\text{s}$ digital `HIGH` pulse to the `TRIG` pin.\n2. The onboard sonic processor triggers the transmitter to fire an **8-pulse burst at 40 kHz**.\n3. The `ECHO` pin goes `HIGH` the instant transmission starts.\n4. When the reflected sonic wave hits the receiver diaphragm, the `ECHO` pin drops `LOW`. The duration of the `HIGH` pulse is the round-trip travel time $t_{echo}$."
+          text: "How does a bat fly in pitch darkness or a car detect obstacles while reversing? By **echolocation**. The HC-SR04 module features two piezoelectric transducers: a transmitter (speaker) and a receiver (microphone).\n\n**The 4-Step Measurement Cycle**:\n1. The Pico sends a $10\\,\\mu\\text{s}$ digital `HIGH` pulse to the `TRIG` pin.\n\n2. The onboard sonic processor triggers the transmitter to fire an **8-pulse burst at 40 kHz**.\n\n3. The `ECHO` pin goes `HIGH` the instant transmission starts.\n\n4. When the reflected sonic wave hits the receiver diaphragm, the `ECHO` pin drops `LOW`. The duration of the `HIGH` pulse is the round-trip travel time $t_{echo}$."
         },
         {
           heading: "2. Why 8 Pulses at 40 kHz? (Gittaly Ultrasonic Q1)",
-          text: "Why doesn't the sensor fire just a single sharp click? A single acoustic pulse has very little energy and is vulnerable to ambient noise spikes (like jangling keys or snapping fingers). Firing 8 consecutive cycles at 40 kHz allows mechanical resonance to build up in the piezoelectric crystal, producing a powerful, coherent acoustic wave with high signal-to-noise ratio that the bandpass receiver circuit can easily distinguish."
+          text: "Why doesn't the sensor fire just a single sharp click? A single acoustic pulse has very little energy and is vulnerable to ambient noise spikes (like jangling keys or snapping fingers).\n\nFiring 8 consecutive cycles at 40 kHz allows mechanical resonance to build up in the piezoelectric crystal, producing a powerful, coherent acoustic wave with high signal-to-noise ratio that the bandpass receiver circuit can easily distinguish."
         },
         {
           heading: "3. The Blind Zone Limitation (Lecture Quiz 8)",
-          text: "Why can't an ultrasonic sensor accurately measure an object placed $1\\text{ cm}$ away? When the transmitter fires, the piezo diaphragm vibrates vigorously and continues ringing down mechanically for approximately $100\\,\\mu\\text{s}$ to $150\\,\\mu\\text{s}$. If an obstacle is closer than $\\approx 2.5\\text{ cm}$, the acoustic reflection bounces back before the transmitter has stopped ringing! The receiver amplifier cannot distinguish the faint echo from its own mechanical reverberation, producing garbage readings."
+          text: "Why can't an ultrasonic sensor accurately measure an object placed $1\\text{ cm}$ away? When the transmitter fires, the piezo diaphragm vibrates vigorously and continues ringing down mechanically for approximately $100\\,\\mu\\text{s}$ to $150\\,\\mu\\text{s}$.\n\nIf an obstacle is closer than $\\approx 2.5\\text{ cm}$, the acoustic reflection bounces back before the transmitter has stopped ringing! The receiver amplifier cannot distinguish the faint echo from its own mechanical reverberation, producing garbage readings."
         },
         {
           heading: "4. Protecting the Pico from the 5V Echo Pin (Tutorial 4 & Lab 4)",
-          text: "The HC-SR04 requires 5V power from `VBUS` to generate sufficient acoustic power. Consequently, its `ECHO` pin outputs a $5\\text{ V}$ logic signal. Connecting this directly to a Pico GPIO pin will fry the internal silicon over time!\n\nTo safely step $5\\text{ V}$ down to $3.3\\text{ V}$, we insert a voltage divider between ECHO and GND:\n$$V_{out} = 5.0\\text{ V} \\times \\frac{R_2}{R_1 + R_2} \\approx 3.3\\text{ V} \\implies \\frac{R_2}{R_1 + R_2} = \\frac{2}{3}$$\nA standard pair is $R_1 = 1\\text{ k}\\Omega$ (top) and $R_2 = 2\\text{ k}\\Omega$ (bottom to GND), yielding $V_{out} = 5.0 \\times \\frac{2000}{3000} = 3.33\\text{ V}$."
+          text: "The HC-SR04 requires 5V power from `VBUS` to generate sufficient acoustic power. Consequently, its `ECHO` pin outputs a $5\\text{ V}$ logic signal. Connecting this directly to a Pico GPIO pin will fry the internal silicon over time!\n\nTo safely step $5\\text{ V}$ down to $3.3\\text{ V}$, we insert a voltage divider between ECHO and GND:\n$$V_{out} = 5.0\\text{ V} \\times \\frac{R_2}{R_1 + R_2} \\approx 3.3\\text{ V} \\implies \\frac{R_2}{R_1 + R_2} = \\frac{2}{3}$$\nA standard pair is $R_1 = 1\\text{ k}\\Omega$ (top) and $R_2 = 2\\text{ k}\\Omega$ (bottom to GND), yielding:\n$$V_{out} = 5.0 \\times \\frac{2000}{3000} = 3.33\\text{ V}$$"
         },
         {
           heading: "5. Infrared (IR) Proximity & Optical Physics (Gittaly IR Q1-Q5)",
-          text: "Digital IR obstacle sensors combine an IR LED emitter (wavelength $\\sim 940\\text{ nm}$) and an IR phototransistor/photodiode connected to an LM393 comparator IC.\n- **The Sensitivity Potentiometer**: Turning the dial adjusts the comparator reference voltage $V_{ref}$. Clockwise increases sensitivity (detects fainter reflections at greater distance); counter-clockwise lowers sensitivity.\n- **Specular vs. Diffuse Reflection**: On a matte surface, light scatters in all directions (Lambertian diffusion), ensuring some photons return to the receiver. A shiny mirror causes specular reflection ($\\theta_r = \\theta_i$). If tilted even $10^\\circ$, all reflected light bounces away into the room, causing the sensor to report 'nothing detected'!\n- **Color Absorption**: Dark/black materials (especially carbon-black) absorb infrared wavelengths, reflecting minimal energy. White materials reflect heavily."
+          text: "Digital IR obstacle sensors combine an IR LED emitter (wavelength $\\sim 940\\text{ nm}$) and an IR phototransistor/photodiode connected to an LM393 comparator IC.\n\n- **The Sensitivity Potentiometer**: Turning the dial adjusts the comparator reference voltage $V_{ref}$. Clockwise increases sensitivity (detects fainter reflections at greater distance); counter-clockwise lowers sensitivity.\n\n- **Specular vs. Diffuse Reflection**: On a matte surface, light scatters in all directions (Lambertian diffusion), ensuring some photons return to the receiver. A shiny mirror causes specular reflection ($\\theta_r = \\theta_i$). If tilted even $10^\\circ$, all reflected light bounces away into the room, causing the sensor to report 'nothing detected'!\n\n- **Color Absorption**: Dark/black materials (especially carbon-black) absorb infrared wavelengths, reflecting minimal energy. White materials reflect heavily."
         }
       ]
     },
@@ -382,7 +382,7 @@ export const COURSE_MODULES = [
           "Because the Raspberry Pi Pico cannot register interrupts shorter than 8 cycles."
         ],
         correctIndex: 0,
-        explanation: "A single acoustic cycle lacks sufficient energy and is vulnerable to ambient acoustic clicks. An 8-cycle burst at the transducer's 40 kHz natural resonant frequency drives the piezoelectric diaphragm into maximum oscillation, producing a strong, coherent wave packet that the receiver's tuned bandpass filter can reliably detect."
+        explanation: "**Step 1: Energy & Signal-to-Noise Ratio**\nA single acoustic pulse has very little energy and is vulnerable to ambient noise spikes (like jangling keys or snapping fingers).\n\n**Step 2: Transducer Mechanical Resonance**\nAn 8-cycle burst at the transducer's $40\\text{ kHz}$ natural resonant frequency drives the piezoelectric crystal into maximum mechanical oscillation. This produces a strong, coherent wave packet that the receiver's tuned bandpass filter can reliably distinguish."
       },
       {
         id: "q-3-2",
@@ -393,7 +393,7 @@ export const COURSE_MODULES = [
         unit: "V",
         correctAnswer: 3.33,
         toleranceRange: [3.30, 3.35],
-        explanation: "By the voltage divider formula: $V_{out} = V_{in} \\cdot \\frac{R_2}{R_1 + R_2} = 5.0\\text{ V} \\cdot \\frac{2000}{1000 + 2000} = 5.0 \\cdot \\frac{2}{3} = 3.333\\text{ V}$, which safely matches the 3.3V GPIO input rating."
+        explanation: "**Step 1: Voltage Divider Formula**\nConnecting $R_1$ from Echo to the junction and $R_2$ from junction to GND:\n$$V_{out} = V_{in} \\cdot \\frac{R_2}{R_1 + R_2}$$\n\n**Step 2: Numerical Substitution**\nWith $V_{in} = 5.0\\text{ V}$, $R_1 = 1000\\ \\Omega$, and $R_2 = 2000\\ \\Omega$:\n$$V_{out} = 5.0\\text{ V} \\cdot \\frac{2000}{1000 + 2000} = 5.0 \\cdot \\frac{2}{3} \\approx 3.333\\text{ V}$$\nThis safely steps down the $5\\text{ V}$ pulse to the Pico's $3.3\\text{ V}$ maximum rating."
       },
       {
         id: "q-3-3",
@@ -408,7 +408,7 @@ export const COURSE_MODULES = [
           "The IR photodiode cannot detect light that has undergone a parity inversion."
         ],
         correctIndex: 0,
-        explanation: "Unlike matte surfaces that produce diffuse Lambertian scattering (spreading reflected photons in all directions), polished reflective surfaces exhibit specular reflection: $\\theta_r = \\theta_i$. If the mirror is angled, the emitted IR photons bounce cleanly away into the room, starving the receiver photodiode of reflected photons."
+        explanation: "**Step 1: Specular Law of Reflection**\nUnlike matte surfaces that produce diffuse Lambertian scattering, polished reflective surfaces obey the law of specular reflection:\n$$\\theta_r = \\theta_i$$\n\n**Step 2: Ray Deflection Away from Sensor**\nWhen the mirror is tilted by $25^\\circ$, the emitted IR beam bounces away at $50^\\circ$ relative to the incident ray. Because virtually zero photons return to the collocated phototransistor, the sensor registers no obstacle."
       },
       {
         id: "q-3-4",
@@ -419,7 +419,7 @@ export const COURSE_MODULES = [
         unit: "raw units",
         correctAnswer: 818,
         toleranceRange: [816, 820],
-        explanation: "The 10-bit ADC maps $0\\text{ V} \\to 0$ and $5.0\\text{ V} \\to 1023$. Thus: $\\text{ADC} = \\text{round}\\left( \\frac{V_{in}}{V_{ref}} \\times 1023 \\right) = \\text{round}\\left( \\frac{4.0}{5.0} \\times 1023 \\right) = \\text{round}(0.80 \\times 1023) = \\text{round}(818.4) = 818$."
+        explanation: "**Step 1: Quantization Transfer Function**\nA 10-bit analog-to-digital converter has $2^{10} = 1024$ quantization levels (integers $0$ to $1023$):\n$$\\text{ADC} = \\text{round}\\left( \\frac{V_{in}}{V_{ref}} \\times 1023 \\right)$$\n\n**Step 2: Calculate Counts at $4.0\\text{ V}$**\nWith $V_{in} = 4.0\\text{ V}$ and $V_{ref} = 5.0\\text{ V}$:\n$$\\text{ADC} = \\text{round}\\left( \\frac{4.0}{5.0} \\times 1023 \\right) = \\text{round}(0.80 \\times 1023) = \\text{round}(818.4) = 818$$"
       },
       {
         id: "q-3-5",
@@ -434,7 +434,7 @@ export const COURSE_MODULES = [
           "Two ultrasonic sensors facing each other and pinging simultaneously, causing acoustic crosstalk interference."
         ],
         correctIndices: [0, 1, 2, 3],
-        explanation: "All four are authentic physical failure modes explored in Labs 4-5: blind zone ring-down, acoustic absorption, geometric acoustic deflection, and mutual sensor acoustic interference."
+        explanation: "**Step 1: Physical Failure Modes**\nAll four choices represent verified physical limitations explored in Labs 4–5:\n\n1. **Transducer Ring-Down ($< 2.5\\text{ cm}$)**: The echo returns while the piezo crystal is still mechanically oscillating from transmission.\n2. **Acoustic Absorption**: Soft fabrics and open-cell foam attenuate sound without returning an echo.\n3. **Specular Deflection**: Angled hard surfaces bounce sound away from the microphone.\n4. **Acoustic Crosstalk**: Facing sonars pick up each other's pulses."
       }
     ],
     vault: {
@@ -470,13 +470,13 @@ export const COURSE_MODULES = [
     badge: "Analog Core",
     icon: "Activity",
     coreInvariants: [
-      "Virtual Short Circuit: V+ ≈ V- strictly when negative feedback is active and the op-amp output is not saturated.",
-      "Zero Input Current: I+ = I- = 0 due to infinite input impedance of the ideal op-amp.",
-      "Gain-Bandwidth Product (GBWP): The product of closed-loop gain and cutoff frequency is constant: A_CL × f_c = GBWP."
+      "Virtual Short Circuit: $V^+ \\approx V^-$ strictly when negative feedback is active and the op-amp output is not saturated.",
+      "Zero Input Current: $I^+ = I^- = 0$ due to infinite input impedance of the ideal op-amp.",
+      "Gain-Bandwidth Product (GBWP): The product of closed-loop gain and cutoff frequency is constant: $A_{CL} \\times f_c = \\text{GBWP}$."
     ],
     commonPitfalls: [
-      "Believing that V+ and V- are physically connected together (they are electrically isolated; tracking is enforced dynamically by feedback).",
-      "Assuming an op-amp can output voltages higher than its power supply rails V_CC and V_EE.",
+      "Believing that $V^+$ and $V^-$ are physically connected together (they are electrically isolated; tracking is enforced dynamically by feedback).",
+      "Assuming an op-amp can output voltages higher than its power supply rails $V_{CC}$ and $-V_{EE}$.",
       "Expecting infinite bandwidth when increasing closed-loop gain (doubling the gain cuts bandwidth in half!)."
     ],
     story: {
@@ -484,19 +484,19 @@ export const COURSE_MODULES = [
       sections: [
         {
           heading: "1. The Ideal Op-Amp Model & The 5 Golden Rules",
-          text: "An **Operational Amplifier** is a differential-input, single-ended-output direct-coupled voltage amplifier. The ideal op-amp exhibits:\n1. **Infinite input impedance** ($R_{in} = \\infty \\implies I^+ = I^- = 0$).\n2. **Zero output impedance** ($R_{out} = 0$).\n3. **Infinite open-loop gain** ($A \\to \\infty$).\n4. **Infinite bandwidth** (amplifies DC up to infinite frequency).\n5. **Infinite common-mode rejection** ($CMRR = \\infty$)."
+          text: "An **Operational Amplifier** is a differential-input, single-ended-output direct-coupled voltage amplifier. The ideal op-amp exhibits:\n\n1. **Infinite input impedance** ($R_{in} = \\infty \\implies I^+ = I^- = 0$).\n\n2. **Zero output impedance** ($R_{out} = 0$).\n\n3. **Infinite open-loop gain** ($A \\to \\infty$).\n\n4. **Infinite bandwidth** (amplifies DC up to infinite frequency).\n\n5. **Infinite common-mode rejection** ($CMRR = \\infty$)."
         },
         {
           heading: "2. The Virtual Short: Why V+ equals V- (Gittaly Op-Amp Q2-Q4)",
-          text: "Why do we say $V^+ \\approx V^-$? The fundamental transfer equation is:\n$$V_{out} = A (V^+ - V^-) \\iff V^+ - V^- = \\frac{V_{out}}{A}$$\nBecause the internal open-loop gain $A$ is enormous (typically $10^5$ to $10^6$ V/V), for any normal output voltage ($V_{out} \\sim 5\\text{ V}$), the differential input voltage is $V^+ - V^- = \\frac{5}{10^5} = 50\\,\\mu\\text{V} \\approx 0$.\n\n**CRITICAL INSIGHT (Gittaly Q4)**: Are the two pins physically shorted? **NO!** A physical wire allows current to flow between pins. An op-amp's inputs draw zero current ($I_{in} = 0$). The tracking is an active feedback phenomenon: the op-amp monitors the error and drives $V_{out}$ to whatever value keeps $V^- = V^+$."
+          text: "Why do we say $V^+ \\approx V^-$? The fundamental transfer equation is:\n$$V_{out} = A (V^+ - V^-) \\iff V^+ - V^- = \\frac{V_{out}}{A}$$\nBecause the internal open-loop gain $A$ is enormous (typically $10^5$ to $10^6\\text{ V/V}$), for any normal output voltage ($V_{out} \\sim 5\\text{ V}$), the differential input voltage is:\n$$V^+ - V^- = \\frac{5}{10^5} = 50\\,\\mu\\text{V} \\approx 0$$\n\n**CRITICAL INSIGHT (Gittaly Q4)**: Are the two pins physically shorted? **NO!** A physical wire allows current to flow between pins. An op-amp's inputs draw zero current ($I_{in} = 0$). The tracking is an active feedback phenomenon: the op-amp monitors the error and drives $V_{out}$ to whatever value keeps $V^- = V^+$."
         },
         {
           heading: "3. Inverting vs Non-Inverting Topologies",
-          text: "- **Inverting Amplifier**: Input is fed through $R_1$ to the inverting terminal, with feedback resistor $R_2$. The non-inverting terminal is grounded ($V^+ = 0$). Thus $V^- = 0$ is a **virtual ground**. Current $I = \\frac{V_{in} - 0}{R_1}$ cannot enter the op-amp, so it flows entirely through $R_2$ into the output. Thus:\n$$V_{out} = 0 - I R_2 = -\\frac{R_2}{R_1} V_{in}$$\n- **Non-Inverting Amplifier**: Input is applied directly to $V^+$. Feedback forms a voltage divider to $V^-$: $V^- = V_{out} \\frac{R_1}{R_1 + R_2} = V_{in} \\implies V_{out} = \\left( 1 + \\frac{R_2}{R_1} \\right) V_{in}$."
+          text: "- **Inverting Amplifier**: Input is fed through $R_1$ to the inverting terminal, with feedback resistor $R_2$. The non-inverting terminal is grounded ($V^+ = 0$). Thus $V^- = 0$ is a **virtual ground**.\n\nCurrent $I = \\frac{V_{in} - 0}{R_1}$ cannot enter the op-amp, so it flows entirely through $R_2$ into the output. Thus:\n$$V_{out} = 0 - I R_2 = -\\frac{R_2}{R_1} V_{in}$$\n\n- **Non-Inverting Amplifier**: Input is applied directly to $V^+$. Feedback forms a voltage divider to $V^-$:\n$$V^- = V_{out} \\frac{R_1}{R_1 + R_2} = V_{in} \\implies V_{out} = \\left( 1 + \\frac{R_2}{R_1} \\right) V_{in}$$"
         },
         {
           heading: "4. The Gain-Bandwidth Tradeoff (Gittaly Op-Amp Q1)",
-          text: "Real op-amps have an internal dominant pole. The product of closed-loop gain $A_{CL}$ and cutoff frequency $f_c$ is constant: **Gain-Bandwidth Product (GBWP)**. If an audio preamplifier with a $1\\text{ MHz}$ GBWP is designed with a gain of $20\\times$, its bandwidth is $f_c = \\frac{1\\text{ MHz}}{20} = 50\\text{ kHz}$. If you try to amplify a microphone signal by increasing gain to $100\\times$, bandwidth collapses to $10\\text{ kHz}$, cutting off high audio frequencies!"
+          text: "Real op-amps have an internal dominant pole. The product of closed-loop gain $A_{CL}$ and cutoff frequency $f_c$ is constant: **Gain-Bandwidth Product (GBWP)**.\n\nIf an audio preamplifier with a $1\\text{ MHz}$ GBWP is designed with a gain of $20\\times$, its bandwidth is:\n$$f_c = \\frac{1\\text{ MHz}}{20} = 50\\text{ kHz}$$\n\nIf you try to amplify a microphone signal by increasing gain to $100\\times$, bandwidth collapses to $10\\text{ kHz}$, cutting off high audio frequencies!"
         }
       ]
     },
@@ -530,7 +530,7 @@ export const COURSE_MODULES = [
           "4 pins for single; 8 pins for quad op-amp."
         ],
         correctIndex: 0,
-        explanation: "A single op-amp requires 2 input pins ($V^+, V^-$), 1 output pin ($V_{out}$), and 2 power supply pins ($V_{CC}, -V_{EE}$), giving $2 + 1 + 2 = 5$ pins. A quad package contains 4 op-amps ($4 \\times 3 = 12$ signal pins) which share common power supply pins ($V_{CC}$ and $-V_{EE}$), giving $12 + 2 = 14$ pins."
+        explanation: "**Step 1: Single Op-Amp Package Pins**\nA single op-amp requires:\n- 2 differential input pins ($V^+, V^-$)\n- 1 output pin ($V_{out}$)\n- 2 DC power supply rails ($V_{CC}, -V_{EE}$)\n$$\\text{Total for single} = 2 + 1 + 2 = 5\\text{ pins}$$\n\n**Step 2: Quad Op-Amp Package Pins**\nA quad package contains 4 separate op-amps:\n- $4 \\times 3 = 12$ signal pins (2 inputs + 1 output each)\n- Shared DC power rails ($V_{CC}$ and $-V_{EE}$)\n$$\\text{Total for quad} = 12 + 2 = 14\\text{ pins}$$"
       },
       {
         id: "q-4-2",
@@ -545,7 +545,7 @@ export const COURSE_MODULES = [
           "Common Mode Rejection Ratio. Increasing gain converts the microphone into an inverting amplifier."
         ],
         correctIndex: 0,
-        explanation: "Op-amps have a constant Gain-Bandwidth Product: $A_{CL} \\times f_c = \\text{GBWP}$. If you increase the gain from 20x to 40x, the cutoff frequency is cut in half ($f_c = \\frac{\\text{GBWP}}{40}$), which exacerbates the high-frequency droop instead of fixing it."
+        explanation: "**Step 1: Gain-Bandwidth Tradeoff**\nInternally compensated op-amps have an open-loop gain that rolls off at $-20\\text{ dB/decade}$. The product of closed-loop gain and corner frequency is invariant:\n$$A_{CL} \\times f_c = \\text{GBWP}$$\n\n**Step 2: Effect of Increasing Gain**\nIf you double the gain from $20\\times$ to $40\\times$, the bandwidth is cut in half:\n$$f_c = \\frac{\\text{GBWP}}{40}$$\nThis lowers the cutoff frequency, making treble sounds attenuate even more severely instead of improving audio clarity."
       },
       {
         id: "q-4-3",
@@ -560,7 +560,7 @@ export const COURSE_MODULES = [
           "No, because $V^+$ is always at least 0.7V higher than $V^-$ due to the base-emitter diode."
         ],
         correctIndex: 0,
-        explanation: "As explained in Gittaly Lecture 4 and Sedra/Smith: It is called a 'virtual short' precisely because no physical connection exists. An ideal op-amp draws zero current ($I^+ = I^- = 0$). The output voltage actively adjusts via negative feedback until the difference $V^+ - V^- = V_{out}/A \\to 0$."
+        explanation: "**Step 1: The 'Virtual' Distinction**\nAs explained in Gittaly Lecture 4 and Sedra/Smith: It is called a 'virtual short' precisely because no physical connection exists between the inputs.\n\n**Step 2: Active Dynamic Feedback**\nAn ideal op-amp draws zero input current ($I^+ = I^- = 0$). The output voltage actively tracks via negative feedback, driving $V_{out}$ so that:\n$$V^+ - V^- = \\frac{V_{out}}{A} \\to 0$$"
       },
       {
         id: "q-4-4",
@@ -571,7 +571,7 @@ export const COURSE_MODULES = [
         unit: "V/V",
         correctAnswer: 9.01,
         toleranceRange: [8.95, 9.05],
-        explanation: "From Sedra & Smith Eq. 2.5: $G = \\frac{-R_2/R_1}{1 + (1 + R_2/R_1)/A}$. Here $R_2/R_1 = 10$, and $A = 100$. Thus $G = \\frac{-10}{1 + (1 + 10)/100} = \\frac{-10}{1 + 0.11} = \\frac{-10}{1.11} = -9.009\\text{ V/V}$. Magnitude $|G| \\approx 9.01$."
+        explanation: "**Step 1: Finite Open-Loop Gain Equation**\nFrom Sedra & Smith Eq. 2.5:\n$$G = \\frac{-R_2/R_1}{1 + \\frac{1 + R_2/R_1}{A}}$$\n\n**Step 2: Numerical Evaluation**\nWith nominal gain ratio $\\frac{R_2}{R_1} = \\frac{10\\text{ k}\\Omega}{1\\text{ k}\\Omega} = 10$ and open-loop gain $A = 100\\text{ V/V}$:\n$$G = \\frac{-10}{1 + \\frac{1 + 10}{100}} = \\frac{-10}{1 + 0.11} = \\frac{-10}{1.11} \\approx -9.009\\text{ V/V}$$\n\n**Step 3: Magnitude**\n$$|G| \\approx 9.01$$"
       },
       {
         id: "q-4-5",
@@ -586,7 +586,7 @@ export const COURSE_MODULES = [
           "When the input signal amplitude is well within the linear operating range under negative feedback."
         ],
         correctIndices: [0, 1, 2],
-        explanation: "The virtual short relies entirely on negative feedback remaining in its active linear region. If the output hits the power rail, if the feedback loop is missing (comparator), or if positive feedback is applied, the loop cannot drive $V^+ - V^- \\to 0$, causing the virtual short to fail."
+        explanation: "**Step 1: Necessary Condition for Virtual Short**\nThe virtual short ($V^+ \\approx V^-$) relies strictly on three operational conditions:\n\n1. Active negative feedback connection exists.\n2. The output voltage has not saturated against the power supply rails ($V_{EE} < V_{out} < V_{CC}$).\n3. Open-loop gain $A$ is very large.\n\n**Step 2: Failure Modes**\nIf the output saturates, if feedback is open-loop (comparator mode), or if positive feedback is applied, the amplifier loses the ability to null the differential error voltage, so $V^+ \\approx V^-$ completely fails."
       }
     ],
     vault: {
@@ -600,11 +600,11 @@ export const COURSE_MODULES = [
       pitfalls: [
         {
           title: "Assuming Op-Amp Power Comes from Inputs",
-          desc: "Current delivered to the load resistor comes from the power supply pins (V_CC/V_EE), NOT from the input signal source."
+          desc: "Current delivered to the load resistor comes from the power supply pins ($V_{CC}/-V_{EE}$), NOT from the input signal source."
         },
         {
           title: "Ignoring Rail Saturation",
-          desc: "An op-amp supplied with ±12V cannot output 15V. If the theoretical gain predicts 15V, the actual output clips flat at ~11.5V (or 12V rail-to-rail)."
+          desc: "An op-amp supplied with $\\pm 12\\text{ V}$ cannot output $15\\text{ V}$. If the theoretical gain predicts $15\\text{ V}$, the actual output clips flat at $\\sim 11.5\\text{ V}$ (or $12\\text{ V}$ rail-to-rail)."
         },
         {
           title: "Leaving Unused Op-Amps Floating",
@@ -622,9 +622,9 @@ export const COURSE_MODULES = [
     badge: "Mechanics Core",
     icon: "Cog",
     coreInvariants: [
-      "Power Conservation Invariant: Mechanical power equals torque times angular velocity: P = τ × ω. With 100% efficiency, P_electrical = P_mechanical.",
-      "Transmission Torque-Speed Tradeoff: A gearbox reduces speed by ratio N while amplifying torque by N: ω_out = ω_in / N, τ_out = τ_in × N.",
-      "Tractive Power Force Relation: Mechanical tractive power equals force times linear velocity: P = F × v."
+      "Power Conservation Invariant: Mechanical power equals torque times angular velocity: $P = \\tau \\cdot \\omega$. With 100% efficiency, $P_{electrical} = P_{mechanical}$.",
+      "Transmission Torque-Speed Tradeoff: A gearbox reduces speed by ratio $N$ while amplifying torque by $N$: $\\omega_{out} = \\frac{\\omega_{in}}{N}$, $\\tau_{out} = \\tau_{in} \\cdot N$.",
+      "Tractive Power Force Relation: Mechanical tractive power equals force times linear velocity: $P = F \\cdot v$."
     ],
     commonPitfalls: [
       "Believing a gearbox creates 'free power'. A gearbox conserves power (minus frictional heat); as torque increases, rotational speed must decrease proportionally.",
@@ -636,19 +636,19 @@ export const COURSE_MODULES = [
       sections: [
         {
           heading: "1. Ideal Motors and Conservation of Energy (Quiz 10)",
-          text: "What does conservation of energy state about an electric motor? In an **ideal motor**, there are zero thermal, winding resistance, or frictional losses. Therefore:\n$$P_{electrical, in} = P_{mechanical, out} \\implies V \\cdot I = \\tau \\cdot \\omega$$\nWhere:\n- $V$ is terminal voltage (Volts), $I$ is current (Amperes).\n- $\\tau$ is shaft torque (Newton-meters, $\\text{N}\\cdot\\text{m}$).\n- $\\omega$ is angular velocity in radians per second ($\\text{rad/s}$, where $\\omega = \\text{RPM} \\times \\frac{2\\pi}{60}$).\n- Output torque is: $\\tau = \\frac{P}{\\omega}$."
+          text: "What does conservation of energy state about an electric motor? In an **ideal motor**, there are zero thermal, winding resistance, or frictional losses. Therefore:\n$$P_{electrical, in} = P_{mechanical, out} \\implies V \\cdot I = \\tau \\cdot \\omega$$\n\nWhere:\n- $V$ is terminal voltage (Volts), $I$ is current (Amperes).\n- $\\tau$ is shaft torque (Newton-meters, $\\text{N}\\cdot\\text{m}$).\n- $\\omega$ is angular velocity in radians per second ($\\text{rad/s}$, where $\\omega = \\text{RPM} \\times \\frac{2\\pi}{60}$).\n- Output torque is: $\\tau = \\frac{P}{\\omega}$."
         },
         {
           heading: "2. The Transmission Tradeoff: Infinite Torque? (Tutorial 6 Q1 & Q2)",
-          text: "Suppose you feed an electric motor $10\\text{ Watts}$ of electrical power. You are free to attach any gearbox you wish.\n- **What is the most torque you can get?** Mathematically, $\\tau = \\frac{P}{\\omega}$. As the gear reduction ratio $N \\to \\infty$, the output speed $\\omega \\to 0$, so theoretical torque approaches **infinity**! In the physical world, torque is bounded by the shear yield strength of the gear teeth and output shaft.\n- **Torque at 10 RPM**: If the gearbox output spins at $10\\text{ RPM}$:\n$$\\omega = 10 \\times \\frac{2\\pi}{60} = \\frac{\\pi}{3} \\approx 1.0472\\text{ rad/s}$$\n$$\\tau = \\frac{P}{\\omega} = \\frac{10\\text{ W}}{1.0472\\text{ rad/s}} = 9.549\\text{ N}\\cdot\\text{m} \\approx 9.55\\text{ N}\\cdot\\text{m}$$"
+          text: "Suppose you feed an electric motor $10\\text{ Watts}$ of electrical power. You are free to attach any gearbox you wish.\n\n- **What is the most torque you can get?** Mathematically, $\\tau = \\frac{P}{\\omega}$. As the gear reduction ratio $N \\to \\infty$, the output speed $\\omega \\to 0$, so theoretical torque approaches **infinity**! In the physical world, torque is bounded by the shear yield strength of the gear teeth and output shaft.\n\n- **Torque at 10 RPM**: If the gearbox output spins at $10\\text{ RPM}$:\n$$\\omega = 10 \\times \\frac{2\\pi}{60} = \\frac{\\pi}{3} \\approx 1.0472\\text{ rad/s}$$\n$$\\tau = \\frac{P}{\\omega} = \\frac{10\\text{ W}}{1.0472\\text{ rad/s}} = 9.549\\text{ N}\\cdot\\text{m} \\approx 9.55\\text{ N}\\cdot\\text{m}$$"
         },
         {
           heading: "3. Vehicle Dynamics from Power Constraints (Tutorial 6 Q3)",
-          text: "A toy car weighing $1\\text{ kgf}$ (mass $m = 1\\text{ kg}$) is traveling at $v = 1\\text{ m/s}$. Using this $10\\text{ W}$ motor to drive the car, what acceleration can you achieve?\nMechanical power is tractive force times velocity: $P = F \\cdot v \\implies F = \\frac{P}{v}$.\nAt $v = 1\\text{ m/s}$, the available driving force is:\n$$F = \\frac{10\\text{ W}}{1\\text{ m/s}} = 10\\text{ Newtons}$$\nBy Newton's second law ($F = m \\cdot a$):\n$$a = \\frac{F}{m} = \\frac{10\\text{ N}}{1\\text{ kg}} = 10\\text{ m/s}^2$$\n(Notice that as the car accelerates to higher speeds, the available acceleration drops inversely with $v$!)."
+          text: "A toy car weighing $1\\text{ kgf}$ (mass $m = 1\\text{ kg}$) is traveling at $v = 1\\text{ m/s}$. Using this $10\\text{ W}$ motor to drive the car, what acceleration can you achieve?\n\nMechanical power is tractive force times velocity:\n$$P = F \\cdot v \\implies F = \\frac{P}{v}$$\n\nAt $v = 1\\text{ m/s}$, the available driving force is:\n$$F = \\frac{10\\text{ W}}{1\\text{ m/s}} = 10\\text{ Newtons}$$\n\nBy Newton's second law ($F = m \\cdot a$):\n$$a = \\frac{F}{m} = \\frac{10\\text{ N}}{1\\text{ kg}} = 10\\text{ m/s}^2$$\n\n*(Notice that as the car accelerates to higher speeds, the available acceleration drops inversely with $v$!).*"
         },
         {
           heading: "4. Human Thermodynamics: Boiling Water & Burning Fat (Tutorial 5)",
-          text: "Can a human pedaling an exercise bike boil off a pot of water?\n- A person working hard all day produces $\\sim 100\\text{ W}$ of mechanical/electrical power over an $8\\text{ hour}$ workday: $E = 100\\text{ W} \\times (8 \\times 3600\\text{ s}) = 2.88\\text{ MJ} \\approx 688\\text{ kcal}$.\n- To heat water from $25^\\circ\\text{C}$ to $100^\\circ\\text{C}$: $\\Delta Q_{heat} = 75\\text{ cal/g} \\approx 314\\text{ J/g}$.\n- Latent heat of vaporization: $L_v = 540\\text{ cal/g} \\approx 2260\\text{ J/g}$.\n- Total energy to boil off $1\\text{ g}$ of water = $615\\text{ cal/g} \\approx 2573\\text{ J/g}$.\n- Water boiled off: $m_{water} = \\frac{2.88 \\times 10^6\\text{ J}}{2573\\text{ J/g}} \\approx 1119\\text{ g} \\approx 1.1\\text{ kg}$ (about one 1-liter bottle of water!).\n- Human efficiency is $\\sim 25\\%$. Bread has $3\\text{ kcal/g}$. To provide $688 / 0.25 = 2752\\text{ kcal}$, you must eat $\\approx 1\\text{ kg}$ of bread! Fat has $9\\text{ kcal/g}$, so you burn $\\approx 300\\text{ g}$ of fat in 8 hours ($\\approx 40\\text{ g/hour}$)."
+          text: "Can a human pedaling an exercise bike boil off a pot of water?\n\n- A person working hard all day produces $\\sim 100\\text{ W}$ of mechanical/electrical power over an $8\\text{ hour}$ workday:\n$$E = 100\\text{ W} \\times (8 \\times 3600\\text{ s}) = 2.88\\text{ MJ} \\approx 688\\text{ kcal}$$\n- To heat water from $25^\\circ\\text{C}$ to $100^\\circ\\text{C}$: $\\Delta Q_{heat} = 75\\text{ cal/g} \\approx 314\\text{ J/g}$.\n- Latent heat of vaporization: $L_v = 540\\text{ cal/g} \\approx 2260\\text{ J/g}$.\n- Total energy to boil off $1\\text{ g}$ of water = $615\\text{ cal/g} \\approx 2573\\text{ J/g}$.\n- Water boiled off:\n$$m_{water} = \\frac{2.88 \\times 10^6\\text{ J}}{2573\\text{ J/g}} \\approx 1119\\text{ g} \\approx 1.1\\text{ kg} \\quad (\\sim 1.1\\text{ Liters})$$\n- Human efficiency is $\\sim 25\\%$. Bread has $3\\text{ kcal/g}$. To provide $688 / 0.25 = 2752\\text{ kcal}$, you must eat $\\approx 1\\text{ kg}$ of bread!\n- Fat has $9\\text{ kcal/g}$, so you burn $\\approx 300\\text{ g}$ of fat in 8 hours ($\\approx 40\\text{ g/hour}$)."
         }
       ]
     },
@@ -678,7 +678,7 @@ export const COURSE_MODULES = [
         unit: "N·m",
         correctAnswer: 9.55,
         toleranceRange: [9.45, 9.65],
-        explanation: "First convert RPM to angular velocity: $\\omega = 10 \\times \\frac{2\\pi}{60} = \\frac{\\pi}{3} \\approx 1.0472\\text{ rad/s}$. Then torque $\\tau = \\frac{P}{\\omega} = \\frac{10\\text{ W}}{1.0472\\text{ rad/s}} = 9.549\\text{ N}\\cdot\\text{m} \\approx 9.55\\text{ N}\\cdot\\text{m}$."
+        explanation: "**Step 1: Convert Rotational Speed to Angular Velocity**\n$$\\omega = 10\\text{ RPM} \\times \\frac{2\\pi}{60} = \\frac{\\pi}{3} \\approx 1.0472\\text{ rad/s}$$\n\n**Step 2: Relate Power, Torque, and Speed**\nMechanical power is the product of torque and angular velocity:\n$$P = \\tau \\cdot \\omega \\implies \\tau = \\frac{P}{\\omega}$$\n\n**Step 3: Calculate Available Shaft Torque**\n$$\\tau = \\frac{10\\text{ W}}{1.0472\\text{ rad/s}} = 9.549\\text{ N}\\cdot\\text{m} \\approx 9.55\\text{ N}\\cdot\\text{m}$$"
       },
       {
         id: "q-5-2",
@@ -689,7 +689,7 @@ export const COURSE_MODULES = [
         unit: "m/s²",
         correctAnswer: 10,
         toleranceRange: [9.9, 10.1],
-        explanation: "Power is force times velocity: $P = F \\cdot v \\implies F = \\frac{P}{v} = \\frac{10\\text{ W}}{1\\text{ m/s}} = 10\\text{ N}$. By Newton's second law: $a = \\frac{F}{m} = \\frac{10\\text{ N}}{1\\text{ kg}} = 10\\text{ m/s}^2$."
+        explanation: "**Step 1: Determine Tractive Force from Power**\nTractive power is the product of force and linear velocity:\n$$P = F \\cdot v \\implies F = \\frac{P}{v}$$\n$$F = \\frac{10\\text{ W}}{1\\text{ m/s}} = 10\\text{ N}$$\n\n**Step 2: Compute Acceleration via Newton's Second Law**\n$$a = \\frac{F}{m} = \\frac{10\\text{ N}}{1\\text{ kg}} = 10\\text{ m/s}^2$$"
       },
       {
         id: "q-5-3",
@@ -704,7 +704,7 @@ export const COURSE_MODULES = [
           "Zero, because gearboxes always dissipate 100% of power as heat at low speeds."
         ],
         correctIndex: 0,
-        explanation: "Since $P = \\tau \\cdot \\omega \\implies \\tau = \\frac{P}{\\omega}$. With an arbitrary gear reduction $N \\to \\infty$, the output speed $\\omega \\to 0$, so $\\tau \\to \\infty$. In physical reality, torque is limited by the shear yield strength of the gear teeth, bearings, and output shaft."
+        explanation: "**Step 1: Power Conservation Relationship**\nBecause power is conserved through an ideal transmission:\n$$P = \\tau \\cdot \\omega \\implies \\tau = \\frac{P}{\\omega}$$\n\n**Step 2: Asymptotic Gearbox Behavior**\nWith an arbitrarily large gear reduction ratio $N \\to \\infty$, the output angular velocity $\\omega \\to 0$. Consequently, the theoretical mathematical torque approaches infinity ($\\tau \\to \\infty$).\n\nIn physical hardware, practical torque is strictly limited by the shear yield strength of the gear teeth, keyways, and output shaft."
       },
       {
         id: "q-5-4",
@@ -715,7 +715,7 @@ export const COURSE_MODULES = [
         unit: "g",
         correctAnswer: 300,
         toleranceRange: [280, 320],
-        explanation: "Mechanical energy produced: $E_{work} = 100\\text{ W} \\times (8 \\times 3600\\text{ s}) = 2.88\\text{ MJ} = \\frac{2.88 \\times 10^6}{4184} \\approx 688\\text{ kcal}$. Food calories burned = $\\frac{688}{0.25} \\approx 2753\\text{ kcal}$. Fat burned = $\\frac{2753\\text{ kcal}}{9\\text{ kcal/g}} \\approx 306\\text{ g} \\approx 300\\text{ g}$."
+        explanation: "**Step 1: Calculate Total Mechanical Work**\n$$E_{work} = 100\\text{ W} \\times (8 \\times 3600\\text{ s}) = 2.88\\text{ MJ}$$\n$$E_{work} = \\frac{2.88 \\times 10^6\\text{ J}}{4184\\text{ J/kcal}} \\approx 688\\text{ kcal}$$\n\n**Step 2: Account for Human Metabolic Efficiency (~25%)**\nBecause human muscle converts food calories at roughly $25\\%$ efficiency:\n$$E_{metabolic} = \\frac{688\\text{ kcal}}{0.25} \\approx 2753\\text{ kcal}$$\n\n**Step 3: Calculate Mass of Body Fat Burned**\nBody fat has an energy density of approximately $9\\text{ kcal/g}$:\n$$\\text{Mass of Fat} = \\frac{2753\\text{ kcal}}{9\\text{ kcal/g}} \\approx 306\\text{ g} \\approx 300\\text{ g}$$"
       },
       {
         id: "q-5-5",
@@ -724,13 +724,13 @@ export const COURSE_MODULES = [
         title: "Ideal vs Real Components in Mechatronics",
         prompt: "In the course comparison table (Lecture Quiz 9), which of the following correctly distinguish an 'Ideal' model from a 'Real' physical component?",
         options: [
-          "Wire: Ideal wire has resistance R = 0 (V = 0 across it); Real wire has small series resistance R where V = IR.",
-          "Battery: Ideal battery has terminal voltage V = V_b constant; Real battery has internal Thevenin resistance r_b causing voltage to sag under load (V = V_b - I r_b).",
-          "DC Motor: Ideal motor converts 100% of electrical power to mechanical work (VI = τω); Real motor has armature resistance R_a, back-EMF, and internal friction.",
+          "Wire: Ideal wire has resistance $R = 0$ ($V = 0$ across it); Real wire has small series resistance $R$ where $V = I R$.",
+          "Battery: Ideal battery has terminal voltage $V = V_b$ constant; Real battery has internal Thevenin resistance $r_b$ causing voltage to sag under load ($V = V_b - I r_b$).",
+          "DC Motor: Ideal motor converts 100% of electrical power to mechanical work ($V I = \\tau \\omega$); Real motor has armature resistance $R_a$, back-EMF, and internal friction.",
           "Ideal motors draw zero current when stalled under infinite load."
         ],
         correctIndices: [0, 1, 2],
-        explanation: "Statements A, B, and C are directly from Lecture Quiz 9. Statement D is completely false: a stalled DC motor draws maximum current ($I_{stall} = V / R_a$) because back-EMF is zero!"
+        explanation: "**Step 1: Analyzing Ideal vs Real Models**\nStatements A, B, and C are authentic comparisons from Lecture Quiz 9:\n\n- Ideal wires have zero resistance ($R=0$); real wires have finite copper trace resistance.\n- Ideal batteries maintain fixed terminal voltage; real batteries exhibit internal Thevenin impedance ($r_b$) causing terminal voltage sag under current draw.\n- Ideal motors convert $100\\%$ of electrical energy to mechanical work ($V I = \\tau \\omega$); real motors experience copper $I^2 R_a$ heating, brush friction, and core eddy losses.\n\n**Step 2: Stall Condition Analysis**\nStatement D is completely false: when stalled ($\\omega = 0$), back-EMF is zero, so the motor draws its absolute maximum current: $I_{stall} = \\frac{V}{R_a}$."
       }
     ],
     vault: {
@@ -744,7 +744,7 @@ export const COURSE_MODULES = [
       pitfalls: [
         {
           title: "The Zero-Speed Power Fallacy",
-          desc: "At stall speed (v = 0 or ω = 0), mechanical power output is ZERO, yet electrical power dissipation (I² Ra) is at its absolute maximum!"
+          desc: "At stall speed ($v = 0$ or $\\omega = 0$), mechanical power output is ZERO, yet electrical power dissipation ($I^2 R_a$) is at its absolute maximum!"
         },
         {
           title: "Gearbox Back-Drivability",
@@ -766,9 +766,9 @@ export const COURSE_MODULES = [
     badge: "Transducers",
     icon: "Scale",
     coreInvariants: [
-      "Wheatstone Bridge Piezoresistive Law: Differential output voltage is directly proportional to strain: ΔV = V_excitation × (Gauge Factor × ε) / 4.",
-      "Quadrature Phase Offset: Channel A and Channel B of an incremental encoder are shifted by exactly 90° (π/2 rad), enabling direction decoding via state transition order.",
-      "HX711 24-Bit Quantization: Provides 16,777,216 counts, resolving microvolt-level bridge strain signals without external instrumentation amplifiers."
+      "Wheatstone Bridge Piezoresistive Law: Differential output voltage is directly proportional to strain: $\\Delta V = V_{excitation} \\cdot \\frac{GF \\cdot \\epsilon}{4}$.",
+      "Quadrature Phase Offset: Channel A and Channel B of an incremental encoder are shifted by exactly $90^\\circ$ ($\\pi/2\\text{ rad}$), enabling direction decoding via state transition order.",
+      "HX711 24-Bit Quantization: Provides $2^{24} = 16{,}777{,}216$ counts, resolving microvolt-level bridge strain signals without external instrumentation amplifiers."
     ],
     commonPitfalls: [
       "Failing to tare (zero) the load cell before taking differential weight measurements.",
@@ -813,18 +813,18 @@ export const COURSE_MODULES = [
         type: "nat",
         source: "Labs 6 & 7 (Measurement)",
         title: "HX711 Calibration Factor & Net Weight",
-        prompt: "A digital scale using an HX711 records a raw zero-load tare reading of $120,000$ counts. When a known $500\\text{ g}$ calibration weight is placed on the scale, the reading becomes $330,000$ counts. Later, an unknown object produces a reading of $540,000$ counts. What is the weight of the unknown object in grams?",
+        prompt: "A digital scale using an HX711 records a raw zero-load tare reading of $120{,}000$ counts. When a known $500\\text{ g}$ calibration weight is placed on the scale, the reading becomes $330{,}000$ counts. Later, an unknown object produces a reading of $540{,}000$ counts. What is the weight of the unknown object in grams?",
         unit: "g",
         correctAnswer: 1000,
         toleranceRange: [998, 1002],
-        explanation: "Calibration factor: $k = \\frac{330000 - 120000}{500\\text{ g}} = \\frac{210000}{500} = 420\\text{ counts/g}$. For the unknown object: $\\text{Weight} = \\frac{540000 - 120000}{420} = \\frac{420000}{420} = 1000\\text{ g}$."
+        explanation: "**Step 1: Determine Calibration Sensitivity ($k$)**\nSubtract the tare baseline reading from the calibration reading:\n$$\\Delta \\text{Counts}_{cal} = 330{,}000 - 120{,}000 = 210{,}000\\text{ counts}$$\n$$k = \\frac{\\Delta \\text{Counts}_{cal}}{W_{cal}} = \\frac{210{,}000\\text{ counts}}{500\\text{ g}} = 420\\text{ counts/g}$$\n\n**Step 2: Compute Net Weight of Unknown Object**\nSubtract the tare offset from the unknown reading and divide by sensitivity $k$:\n$$\\Delta \\text{Counts}_{target} = 540{,}000 - 120{,}000 = 420{,}000\\text{ counts}$$\n$$\\text{Weight} = \\frac{420{,}000\\text{ counts}}{420\\text{ counts/g}} = 1000\\text{ g}$$"
       },
       {
         id: "q-6-2",
         type: "mcq",
         source: "Course Outline & Encoder Principles",
         title: "Quadrature Encoder Direction Decoding",
-        prompt: "Why are the two signal channels (A and B) of a rotary encoder placed in quadrature (90° electrical phase offset)?",
+        prompt: "Why are the two signal channels (A and B) of a rotary encoder placed in quadrature ($90^\\circ$ electrical phase offset)?",
         options: [
           "To allow the microcontroller to determine the direction of rotation (clockwise vs counter-clockwise) by detecting which channel transitions first.",
           "To double the maximum operating voltage of the motor driver.",
@@ -832,7 +832,7 @@ export const COURSE_MODULES = [
           "Because single-channel encoders cannot measure speed above 10 RPM."
         ],
         correctIndex: 0,
-        explanation: "By having Channel A and Channel B $90^\\circ$ out of phase, one channel leads the other depending on direction. For example, during clockwise rotation, Channel A goes high before Channel B; during counter-clockwise rotation, Channel B goes high first. This phase relationship allows direction and position to be unambiguously determined."
+        explanation: "**Step 1: Quadrature Phase Offset Mechanism**\nChannels A and B produce square waves shifted by $90^\\circ$ electrical phase ($\\pi/2\\text{ rad}$).\n\n**Step 2: Direction Decoding Logic**\n- **Clockwise (Forward)**: Channel A transitions before Channel B (A leads B).\n- **Counter-Clockwise (Reverse)**: Channel B transitions before Channel A (B leads A).\n\n**Step 3: Edge Decoding Multiplier**\nDetecting all rising and falling edges on both channels ($4\\times$ decoding) quadruples angular resolution ($4 \\times \\text{PPR}$)."
       },
       {
         id: "q-6-3",
@@ -847,7 +847,7 @@ export const COURSE_MODULES = [
           "It allows the load cell to operate without any power supply excitation."
         ],
         correctIndices: [0, 1, 2],
-        explanation: "A full Wheatstone bridge doubles the tension and compression arms, quadrupling differential sensitivity and canceling common-mode temperature drifts. It does require external voltage excitation ($V_E$)."
+        explanation: "**Step 1: Sensitivity Quadrupling**\nIn a full-bridge circuit with two strain gauges in tension and two in compression, the differential output voltage is four times that of a quarter bridge:\n$$\\Delta V = V_{excitation} \\cdot (GF \\cdot \\epsilon)$$\n\n**Step 2: Temperature & Axial Load Compensation**\nBecause all four strain gauges experience identical ambient thermal expansion, the bridge resistance drifts symmetrically, canceling temperature errors and unwanted axial bending moments.\n\n**Step 3: Excitation Requirement**\nA Wheatstone bridge is a passive resistive network and strictly requires external DC excitation voltage ($V_{excitation}$)."
       }
     ],
     vault: {
@@ -878,14 +878,14 @@ export const COURSE_MODULES = [
     badge: "Robotics Core",
     icon: "Camera",
     coreInvariants: [
-      "Perspective Projection: 3D coordinates (X, Y, Z) map to 2D image coordinates via division by depth Z: u = fx (X/Z) + cx, v = fy (Y/Z) + cy.",
-      "Camera Calibration Matrix K: Encapsulates intrinsic geometry: focal lengths (fx, fy), principal point offset (cx, cy), and skew (s ≈ 0).",
-      "Scale Ambiguity: A single monocular camera cannot determine metric depth Z without an external scale prior or stereo baseline."
+      "Perspective Projection: 3D coordinates $(X, Y, Z)$ map to 2D image coordinates via division by depth $Z$: $u = f_x \\frac{X}{Z} + c_x, \\quad v = f_y \\frac{Y}{Z} + c_y$.",
+      "Camera Calibration Matrix $\\mathbf{K}$: Encapsulates intrinsic geometry: focal lengths $(f_x, f_y)$, principal point offset $(c_x, c_y)$, and skew ($s \\approx 0$).",
+      "Scale Ambiguity: A single monocular camera cannot determine metric depth $Z$ without an external scale prior or stereo baseline."
     ],
     commonPitfalls: [
       "Assuming a larger object in pixel space is necessarily larger in 3D (it could simply be closer to the camera).",
       "Neglecting radial lens distortion at the edges of wide-angle camera images.",
-      "Treating camera projection as an invertible linear matrix without knowing depth Z."
+      "Treating camera projection as an invertible linear matrix without knowing depth $Z$."
     ],
     story: {
       summary: "Understand the mathematical bridge between the 3D continuous world and 2D pixel grids. Based on Stanford CS231A camera models and Dudek & Jenkin, we unpack the pinhole model, intrinsic matrices, and perspective projection.",
@@ -930,7 +930,7 @@ export const COURSE_MODULES = [
         unit: "px",
         correctAnswer: 560,
         toleranceRange: [558, 562],
-        explanation: "By perspective projection: $u = f_x \\frac{X}{Z} + c_x = 600 \\cdot \\frac{1.2}{3.0} + 320 = 600 \\cdot 0.4 + 320 = 240 + 320 = 560\\text{ px}$."
+        explanation: "**Step 1: Perspective Projection Model**\nThe horizontal pixel coordinate is given by the pinhole projection formula:\n$$u = f_x \\frac{X}{Z} + c_x$$\n\n**Step 2: Depth Normalization**\nNormalize the horizontal camera coordinate by depth $Z$:\n$$\\frac{X}{Z} = \\frac{1.2\\text{ m}}{3.0\\text{ m}} = 0.40$$\n\n**Step 3: Compute Pixel Coordinate**\n$$u = (600\\text{ px} \\times 0.40) + 320\\text{ px} = 240 + 320 = 560\\text{ px}$$"
       },
       {
         id: "q-7-2",
@@ -939,13 +939,13 @@ export const COURSE_MODULES = [
         title: "Monocular Vision Scale Ambiguity",
         prompt: "Why can a mobile robot not determine the absolute metric distance of an unknown object using only a single standard 2D camera image?",
         options: [
-          "Because perspective projection divides by depth Z; multiplying 3D coordinates by any scalar factor k yields the exact same 2D pixel coordinates.",
+          "Because perspective projection divides by depth $Z$; multiplying 3D coordinates by any scalar factor $k$ yields the exact same 2D pixel coordinates.",
           "Because CMOS sensors only capture light in the visible spectrum and cannot detect infrared.",
           "Because RGB Bayer filters remove high-frequency spatial depth components.",
           "Because camera focal length dynamically changes with distance."
         ],
         correctIndex: 0,
-        explanation: "Perspective projection is a many-to-one mapping: every point along the line of sight $\\mathbf{P}' = k \\mathbf{P}$ maps to the exact same image coordinate $\\frac{kX}{kZ} = \\frac{X}{Z}$. Without a known object size or multi-camera baseline, depth is ambiguous."
+        explanation: "**Step 1: The Perspective Division Property**\nPerspective projection maps 3D world coordinates onto the sensor plane by dividing by depth $Z$:\n$$u = f_x \\frac{X}{Z} + c_x, \\quad v = f_y \\frac{Y}{Z} + c_y$$\n\n**Step 2: Scale Invariance of Sight Rays**\nEvery 3D point $\\mathbf{P}' = k \\cdot [X, Y, Z]^T$ along the sight line through the pinhole produces the identical projection:\n$$\\frac{kX}{kZ} = \\frac{X}{Z}$$\n\n**Step 3: Overcoming Monocular Ambiguity**\nWithout an external scale metric, known object dimensions, or a multi-camera stereo baseline, absolute physical distance is mathematically ambiguous from a single image."
       }
     ],
     vault: {
@@ -957,11 +957,11 @@ export const COURSE_MODULES = [
       pitfalls: [
         {
           title: "Division by Zero at Z = 0",
-          desc: "Points lying on or behind the focal plane (Z <= 0) cannot be projected into pixel coordinates."
+          desc: "Points lying on or behind the focal plane ($Z \\le 0$) cannot be projected into pixel coordinates."
         },
         {
           title: "Focal Length Units",
-          desc: "Never mix focal length in millimeters (f) with focal length in pixel units (fx). fx = f * ku accounts for pixel pitch."
+          desc: "Never mix focal length in millimeters ($f$) with focal length in pixel units ($f_x$). The conversion $f_x = f \\cdot k_u$ accounts for pixel pitch."
         }
       ]
     }
@@ -975,9 +975,9 @@ export const COURSE_MODULES = [
     badge: "Algorithms Core",
     icon: "MapPin",
     coreInvariants: [
-      "A* Optimality Condition: A* search is guaranteed to find the strictly optimal path if the heuristic h(n) is admissible (never overestimates true cost) and consistent.",
-      "Bayesian Log-Odds Occupancy Update: Posterior log-odds of a grid cell is the simple linear sum of prior log-odds and inverse sensor model: l_t(m_i) = l_{t-1}(m_i) + inv_sensor(m_i, z_t) - l_0.",
-      "Differential Drive Odometry: Robot pose (x, y, θ) updates from wheel displacements: Δs = (Δs_R + Δs_L) / 2 and Δθ = (Δs_R - Δs_L) / L."
+      "A* Optimality Condition: A* search is guaranteed to find the strictly optimal path if the heuristic $h(n)$ is admissible ($0 \\le h(n) \\le h^*(n)$) and consistent.",
+      "Bayesian Log-Odds Occupancy Update: Posterior log-odds of a grid cell is the simple linear sum of prior log-odds and inverse sensor model: $l_t(m_i) = l_{t-1}(m_i) + \\text{inv\\_sensor}(m_i, z_t) - l_0$.",
+      "Differential Drive Odometry: Robot pose $(x, y, \\theta)$ updates from wheel displacements: $\\Delta s = \\frac{\\Delta s_R + \\Delta s_L}{2}$ and $\\Delta \\theta = \\frac{\\Delta s_R - \\Delta s_L}{L}$."
     ],
     commonPitfalls: [
       "Using Dijkstra or A* directly on a physical robot point without inflating obstacles by the robot's physical collision radius (Configuration Space C-space).",
@@ -1031,7 +1031,7 @@ export const COURSE_MODULES = [
           "It must be non-monotonic and depend on robot velocity."
         ],
         correctIndex: 0,
-        explanation: "An admissible heuristic satisfies $0 \\le h(n) \\le h^*(n)$ for all nodes $n$, where $h^*(n)$ is the true shortest distance to the goal. If $h(n)$ never overestimates, A* is guaranteed to terminate with the optimal path."
+        explanation: "**Step 1: Definition of Admissibility**\nA heuristic $h(n)$ is admissible if it never overestimates the true minimal cost to reach the goal:\n$$0 \\le h(n) \\le h^*(n) \\quad \\forall n$$\n\n**Step 2: Proof Intuition for Optimality**\nBecause total estimated cost is $f(n) = g(n) + h(n)$, an admissible heuristic guarantees that the goal node cannot be dequeued with a suboptimal path, because any node along the true shortest path will always have a lower or equal $f$-score.\n\n**Step 3: Common Admissible Heuristics**\n- 4-Connected Grid: Manhattan Distance ($|\\Delta x| + |\\Delta y|$).\n- Continuous Metric Space: Euclidean Distance ($\\sqrt{\\Delta x^2 + \\Delta y^2}$)."
       },
       {
         id: "q-8-2",
@@ -1042,7 +1042,7 @@ export const COURSE_MODULES = [
         unit: "rad",
         correctAnswer: 1.5,
         toleranceRange: [1.48, 1.52],
-        explanation: "By differential drive kinematics: $\\Delta \\theta = \\frac{\\Delta s_R - \\Delta s_L}{L} = \\frac{0.40\\text{ m} - 0.10\\text{ m}}{0.20\\text{ m}} = \\frac{0.30}{0.20} = 1.50\\text{ radians}$."
+        explanation: "**Step 1: Differential Drive Kinematics**\nThe heading rotation angle $\\Delta \\theta$ is derived from the difference in wheel arc displacements divided by track width $L$:\n$$\\Delta \\theta = \\frac{\\Delta s_R - \\Delta s_L}{L}$$\n\n**Step 2: Substitute Given Displacements**\nGiven $\\Delta s_R = 0.40\\text{ m}$, $\\Delta s_L = 0.10\\text{ m}$, and $L = 0.20\\text{ m}$:\n$$\\Delta s_R - \\Delta s_L = 0.40 - 0.10 = 0.30\\text{ m}$$\n\n**Step 3: Compute Heading Angle**\n$$\\Delta \\theta = \\frac{0.30\\text{ m}}{0.20\\text{ m}} = 1.50\\text{ radians}$$"
       },
       {
         id: "q-8-3",
@@ -1057,7 +1057,7 @@ export const COURSE_MODULES = [
           "Log-odds eliminates the need to consider sensor noise."
         ],
         correctIndices: [0, 1, 2],
-        explanation: "Log-odds transforms Bayes' rule into additive updates, avoids float underflow, and maps $p=0.5 \\implies l=0$. It still relies directly on the probabilistic sensor noise model."
+        explanation: "**Step 1: Mathematical Definition of Log-Odds**\nFor probability $p \\in (0, 1)$, log-odds is defined as:\n$$l = \\log \\left( \\frac{p}{1 - p} \\right)$$\n- Neutral prior ($p = 0.5$) maps to $l = 0$.\n- High confidence occupied ($p \\to 1$) maps to $l \\to +\\infty$.\n- High confidence free ($p \\to 0$) maps to $l \\to -\\infty$.\n\n**Step 2: Additive Bayes Filter Updates**\nApplying Bayes' rule turns into simple additions and subtractions:\n$$l_t(m_i) = l_{t-1}(m_i) + \\log \\left( \\frac{p(m_i \\mid z_t)}{1 - p(m_i \\mid z_t)} \\right) - l_0$$\n\n**Step 3: Numerical Stability**\nThis additive formulation eliminates floating-point precision underflow caused by multiplying chains of probabilities near zero."
       }
     ],
     vault: {
@@ -1074,7 +1074,7 @@ export const COURSE_MODULES = [
         },
         {
           title: "Odometry Integration Drift",
-          desc: "Heading errors (Δθ) propagate into catastrophic position error: x = ∫ cos(θ) ds. A 2° orientation error causes meters of lateral drift over time."
+          desc: "Heading errors ($\\Delta \\theta$) propagate into catastrophic position error: $x = \\int \\cos(\\theta) ds$. A $2^\\circ$ orientation error causes meters of lateral drift over time."
         }
       ]
     }

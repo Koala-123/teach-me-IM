@@ -32,9 +32,9 @@ export function StoryQuadrant({ module, onProceedToLab }) {
           {module.title}
         </h1>
         
-        <p className="mt-3 text-sm sm:text-base text-slate-300 leading-relaxed max-w-3xl">
-          {module.story.summary}
-        </p>
+        <div className="mt-3 text-sm sm:text-base text-slate-300 leading-relaxed max-w-3xl">
+          <MathView text={module.story.summary} />
+        </div>
 
         {/* Core Invariants Callout Box */}
         <div className="mt-6 bg-cyan-950/30 border border-cyan-700/40 rounded-xl p-4 sm:p-5">
@@ -46,7 +46,9 @@ export function StoryQuadrant({ module, onProceedToLab }) {
             {module.coreInvariants.map((inv, idx) => (
               <li key={idx} className="flex items-start space-x-2">
                 <span className="text-cyan-400 font-mono mt-0.5">•</span>
-                <MathView text={inv} className="leading-snug" />
+                <div className="flex-1">
+                  <MathView text={inv} className="leading-snug" />
+                </div>
               </li>
             ))}
           </ul>
@@ -84,9 +86,13 @@ export function StoryQuadrant({ module, onProceedToLab }) {
         </div>
         <div className="grid gap-3 sm:grid-cols-2">
           {module.commonPitfalls.map((pitfall, pIdx) => (
-            <div key={pIdx} className="bg-space-900/80 p-3.5 rounded-lg border border-rose-900/30 text-xs sm:text-sm text-slate-300">
-              <span className="text-rose-400 font-bold mr-1.5">⚠️ Pitfall {pIdx + 1}:</span>
-              <MathView text={pitfall} />
+            <div key={pIdx} className="bg-space-900/80 p-3.5 rounded-lg border border-rose-900/30 text-xs sm:text-sm text-slate-300 flex flex-col justify-between">
+              <div className="text-rose-400 font-bold mb-1 flex items-center gap-1.5">
+                <span>⚠️ Pitfall {pIdx + 1}</span>
+              </div>
+              <div className="flex-1">
+                <MathView text={pitfall} />
+              </div>
             </div>
           ))}
         </div>

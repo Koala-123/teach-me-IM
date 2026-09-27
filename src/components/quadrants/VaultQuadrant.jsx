@@ -63,9 +63,9 @@ export function VaultQuadrant({ module }) {
                 <h4 className="text-sm font-bold text-slate-100">
                   {p.title}
                 </h4>
-                <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-normal">
+                <div className="text-xs sm:text-sm text-slate-300 leading-relaxed font-normal">
                   <MathView text={p.desc} />
-                </p>
+                </div>
               </div>
             </div>
           ))}

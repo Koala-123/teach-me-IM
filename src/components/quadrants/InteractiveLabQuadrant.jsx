@@ -179,9 +179,9 @@ export function InteractiveLabQuadrant({ module, onProceedToPractice }) {
                   <Sparkles className="w-4 h-4" />
                   <span>Interactive Quick Quest Challenge</span>
                 </div>
-                <p className="text-xs sm:text-sm text-slate-200">
+                <div className="text-xs sm:text-sm text-slate-200">
                   <MathView text={labSpec.quickQuest.prompt} />
-                </p>
+                </div>
                 <p className="text-[11px] text-emerald-400/90 font-mono mt-1">
                   Expected: {labSpec.quickQuest.expectedSummary}
                 </p>

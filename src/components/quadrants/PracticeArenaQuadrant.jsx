@@ -289,9 +289,9 @@ export function PracticeArenaQuadrant({
               <h3 className="text-base sm:text-lg font-bold text-white mb-2">
                 {question.title}
               </h3>
-              <p className="text-sm sm:text-base text-slate-200 leading-relaxed mb-6 font-normal">
+              <div className="text-sm sm:text-base text-slate-200 leading-relaxed mb-6 font-normal">
                 <MathView text={question.prompt} />
-              </p>
+              </div>
 
               {/* ---------------- 1. MCQ OPTIONS ---------------- */}
               {question.type === 'mcq' && (
